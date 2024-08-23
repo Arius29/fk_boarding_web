@@ -1,5 +1,7 @@
 import { RouteObject } from 'react-router-dom'
 import {
+  ADD_SHERPA_PAGE_URL,
+  EDIT_SHERPA_PAGE_URL,
   HOME_PAGE_URL,
   NOTIFICATIONS_PAGE_URL,
   PROCESS_PAGE_URL,
@@ -10,6 +12,9 @@ import {
 } from './routes-config'
 import { PrivateRouteAsideMenu } from '../components/common/private-route-aside-menu'
 import { TagPage } from '../pages/tags/tag-page'
+import { SherpasPage } from '../pages/sherpas/sherpas-page'
+import { ProcessPage } from '../pages/process/process-page'
+import { SherpaFormPage } from '../pages/sherpas/sherpa-form-page'
 
 export const privateRoutes: RouteObject[] = [
   PrivateRouteAsideMenu({
@@ -18,7 +23,7 @@ export const privateRoutes: RouteObject[] = [
   }),
   PrivateRouteAsideMenu({
     path: SHERPAS_PAGE_URL,
-    element: <h1>Sherpas</h1>,
+    element: <SherpasPage />,
   }),
   PrivateRouteAsideMenu({
     path: TASKS_PAGE_URL,
@@ -26,7 +31,7 @@ export const privateRoutes: RouteObject[] = [
   }),
   PrivateRouteAsideMenu({
     path: PROCESS_PAGE_URL,
-    element: <h1>Process</h1>,
+    element: <ProcessPage />,
   }),
   PrivateRouteAsideMenu({
     path: TAGS_PAGE_URL,
@@ -39,5 +44,13 @@ export const privateRoutes: RouteObject[] = [
   PrivateRouteAsideMenu({
     path: SHERPAS_PROCESS_PAGE_URL,
     element: <h1>Sherpas process</h1>,
+  }),
+  PrivateRouteAsideMenu({
+    path: EDIT_SHERPA_PAGE_URL,
+    element: <SherpaFormPage mode="edit" />,
+  }),
+  PrivateRouteAsideMenu({
+    path: ADD_SHERPA_PAGE_URL,
+    element: <SherpaFormPage mode="add" />,
   }),
 ]

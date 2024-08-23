@@ -5,119 +5,44 @@ import { Tag } from './interfaces/Tag'
 import { sortArray } from '../../utils/array-utils'
 import { useTablePagination } from '../../hooks/use-table-pagination'
 import { TablePagination } from '../../components/common/table/table-pagination'
+import { SearchBar } from '../../components/common/search/search-bar'
+import { PrimaryButton } from '../../components/common/buttons/primary-button'
+import { Title } from '../../components/common/core/title'
+import { tagsMocks } from '../../mocks/tag-mocks'
 
-const initialState: Tag[] = [
-  {
-    id: 1,
-    name: 'TI',
-    description: 'Soporte telematico',
-    hexColor: '#db182c',
-  },
-  {
-    id: 3,
-    name: 'SA',
-    description: 'Soporte administrativo',
-    hexColor: '#4287f5',
-  },
-  {
-    id: 2,
-    name: 'RH',
-    description: 'Recursos humanos',
-    hexColor: '#4287f5',
-  },
-  {
-    id: 4,
-    name: 'RH',
-    description: 'Recursos humanos',
-    hexColor: '#4287f5',
-  },
-  {
-    id: 5,
-    name: 'RH',
-    description: 'Recursos humanos',
-    hexColor: '#4287f5',
-  },
-  {
-    id: 6,
-    name: 'RH',
-    description: 'Recursos humanos',
-    hexColor: '#4287f5',
-  },
-  {
-    id: 7,
-    name: 'RH',
-    description: 'Recursos humanos',
-    hexColor: '#4287f5',
-  },
-  {
-    id: 8,
-    name: 'RH',
-    description: 'Recursos humanos',
-    hexColor: '#4287f5',
-  },
-  {
-    id: 9,
-    name: 'RH',
-    description: 'Recursos humanos',
-    hexColor: '#4287f5',
-  },
-  {
-    id: 10,
-    name: 'RH',
-    description: 'Recursos humanos',
-    hexColor: '#4287f5',
-  },
-  {
-    id: 11,
-    name: 'RH',
-    description: 'Recursos humanos',
-    hexColor: '#4287f5',
-  },
-  {
-    id: 12,
-    name: 'RH',
-    description: 'Recursos humanos',
-    hexColor: '#4287f5',
-  },
-  {
-    id: 13,
-    name: 'RH',
-    description: 'Recursos humanos',
-    hexColor: '#4287f5',
-  },
-  {
-    id: 14,
-    name: 'RH',
-    description: 'Recursos humanos',
-    hexColor: '#4287f5',
-  },
-  {
-    id: 15,
-    name: 'RH',
-    description: 'Recursos humanos',
-    hexColor: '#4287f5',
-  },
-  {
-    id: 16,
-    name: 'RH',
-    description: 'Recursos humanos',
-    hexColor: '#4287f5',
-  },
-]
+const initialStateTag: Tag = {
+  id: 0,
+  name: '',
+  description: '',
+  hexColor: '#000000',
+}
 
 type SortOrder = 'asc' | 'desc'
 
-export const TagPage = () => {
-  const [showModal, setShowModal] = useState(false)
-  const [selectedTag, setSelectedTag] = useState<Tag | undefined>()
-  const sortConfig = useRef<SortOrder>('asc')
-  const handleToggle = () => setShowModal(!showModal)
-  const [tags, setTags] = useState<Tag[]>(initialState)
+const filterTags = (tags: Tag[], searchValue: string) => {
+  return tags.filter((tag) => {
+    return (
+      tag.name.toLowerCase().includes(searchValue.toLowerCase()) ||
+      tag.description.toLowerCase().includes(searchValue.toLowerCase())
+    )
+  })
+}
 
+export const TagPage = () => {
+  const [searchValue, setSearchValue] = useState<string>('')
+  const [showModal, setShowModal] = useState(false)
+  const [selectedTag, setSelectedTag] = useState<Tag>(initialStateTag)
+  const sortConfig = useRef<SortOrder>('asc')
+  const isEditing = useRef<boolean>(false)
+  const searchBarRef = useRef<HTMLInputElement>(null)
+  const [tags, setTags] = useState<Tag[]>(tagsMocks)
+
+  const handleToggle = () => setShowModal(!showModal)
   const handleSelectTag = (id: number) => {
     const tag = tags.find((tag) => tag.id === id)
     if (!tag) return
     setSelectedTag(tag)
+    isEditing.current = true
     handleToggle()
   }
   const handleSortColumn = (key: keyof Tag) => {
@@ -126,36 +51,78 @@ export const TagPage = () => {
     setTags(sortedTags)
   }
 
+  const handleAddTag = (tag: Tag) => {
+    console.log(tag)
+  }
+
+  const handleEditTag = (tag: Tag) => {
+    console.log(tag)
+  }
+
+  const handleDeleteTag = (id: number) => {
+    console.log(id)
+  }
+
+  const handleSearch = (query: string) => {
+    setSearchValue(query)
+  }
+
   const { current, totalPages, handleChangePage, paginatedItems } =
     useTablePagination({
-      items: tags,
-      itemsPerPage: 15,
+      items: filterTags(tags, searchValue),
+      itemsPerPage: 10,
       currentPage: 1,
     })
 
   return (
     <>
-      <h1 className="text-2xl">Tags</h1>
-      <header>
-        <form action="">
-          <input type="search" placeholder="Search" />
+      <Title>Tags</Title>
+      <header className="flex flex-row flex-nowrap justify-between items-center mb-8">
+        <form
+          onSubmit={(e) => {
+            e.preventDefault()
+            handleSearch(searchBarRef.current?.value || '')
+          }}
+        >
+          <SearchBar
+            onBlur={(e) => handleSearch(e.target.value)}
+            ref={searchBarRef}
+          />
         </form>
-        <button aria-label="Add new tag">Add</button>
+        <PrimaryButton
+          onClick={() => {
+            isEditing.current = false
+            handleToggle()
+          }}
+        >
+          Add
+        </PrimaryButton>
       </header>
-      <div className="sm:rounded-lg flex-1  flex flex-col justify-between items-center">
-        <TableTags
-          tags={paginatedItems}
-          handleSelectTag={handleSelectTag}
-          handleSortColumn={handleSortColumn}
-        />
+      <section
+        className="sm:rounded-lg flex-1 flex flex-col justify-between items-center"
+        style={{ maxHeight: 'calc(100vh - 208px)' }}
+      >
+        <div className="flex-1 w-full overflow-y-auto">
+          <TableTags
+            tags={paginatedItems}
+            handleSelectTag={handleSelectTag}
+            handleSortColumn={handleSortColumn}
+            handleDeleteTag={handleDeleteTag}
+          />
+        </div>
         <TablePagination
           currentPage={current}
           totalPages={totalPages}
           handleChangePage={handleChangePage}
         />
-      </div>
-      {showModal && selectedTag && (
-        <EditTagModal handleToggle={handleToggle} tag={selectedTag} />
+      </section>
+      {showModal && (
+        <EditTagModal
+          isEditing={isEditing.current}
+          handleToggle={handleToggle}
+          tag={isEditing.current ? selectedTag : initialStateTag}
+          handleTagForm={isEditing.current ? handleEditTag : handleAddTag}
+        />
       )}
     </>
   )

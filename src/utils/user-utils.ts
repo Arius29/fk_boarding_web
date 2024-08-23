@@ -12,6 +12,11 @@ export const getAvatarColor = (name: string) => {
     '#E67E22',
     '#7639bf',
     '#cc74a5',
+    '#00a8ff',
+    '#33cc33',
+    '#ff33cc',
+    '#ffcc33',
+    '#cc33ff',
   ]
   const index = name.charCodeAt(0) % colors.length
   return colors[index]

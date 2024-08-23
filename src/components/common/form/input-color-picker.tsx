@@ -1,29 +1,16 @@
-import { useRef, useState } from 'react'
+import { forwardRef } from 'react'
 
 interface InputColorPickerProps
   extends React.InputHTMLAttributes<HTMLInputElement> {
   id?: string
   label?: string
-  value?: string
-  defaultValue?: string
   includeHex?: boolean
 }
 
-export const InputColorPicker = ({
-  id,
-  label,
-  value,
-  defaultValue = '#000000',
-  includeHex = false,
-  ...props
-}: InputColorPickerProps) => {
-  const [hexColor, setHexColor] = useState<string | null>(value || defaultValue)
-
-  const inputRef = useRef<HTMLInputElement>(null)
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setHexColor(event.target.value)
-  }
-
+export const InputColorPicker = forwardRef<
+  HTMLInputElement,
+  InputColorPickerProps
+>(({ id, label, includeHex = false, ...props }, ref) => {
   return (
     <fieldset>
       {label && (
@@ -33,16 +20,13 @@ export const InputColorPicker = ({
       )}
       <input
         {...props}
+        ref={ref}
         id={id}
         name={id}
         type="color"
         className="p-1 h-10 w-14 block bg-white border border-gray-200 cursor-pointer rounded-lg disabled:opacity-50 disabled:pointer-events-none"
-        value={value}
-        defaultValue={defaultValue}
-        ref={inputRef}
-        onChange={handleChange}
       />
-      {includeHex && <p className="text-xs">{hexColor}</p>}
+      {includeHex && <p className="text-xs">{props.value}</p>}
     </fieldset>
   )
-}
+})

@@ -25,7 +25,7 @@ export const TablePagination = ({
   return (
     <footer
       {...props}
-      className="flex flex-row flex-nowrap gap-3 items-center border border-gray-100 rounded-full py-2 px-6 w-fit"
+      className="flex flex-row flex-nowrap gap-3 items-center border border-gray-100 rounded-full py-2 px-6 mt-4 w-fit"
     >
       <TablePaginationNavButton
         currentPage={currentPage}

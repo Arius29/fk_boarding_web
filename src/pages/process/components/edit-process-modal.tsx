@@ -1,13 +1,12 @@
 import { useForm } from 'react-hook-form'
-import { InputColorPicker } from '../../../components/common/form/input-color-picker'
-import { InputFormLabel } from '../../../components/common/form/input-form-label'
 import { Modal } from '../../../components/common/modal/modal'
-import { Tag } from '../interfaces/Tag'
-interface EditTagModalProps {
+import { InputFormLabel } from '../../../components/common/form/input-form-label'
+import { Process } from '../interfaces/process'
+interface EditProcessModalProps {
   isEditing: boolean
-  tag: Tag
+  process: Process
   handleToggle: () => void
-  handleTagForm: (tag: Tag) => void
+  handleProcessForm: (process: Process) => void
 }
 
 const validations = {
@@ -24,45 +23,40 @@ const validations = {
       message: 'The description cannot exceed 250 characters.',
     },
   },
-  hexColor: {
-    maxLength: {
-      value: 10,
-      message: 'The hex color cannot exceed 10 characters.',
-    },
-  },
 }
 
-export const EditTagModal = ({
+export const EditProcessModal = ({
   isEditing,
-  tag,
+  process,
   handleToggle,
-  handleTagForm,
-}: EditTagModalProps) => {
+  handleProcessForm,
+}: EditProcessModalProps) => {
   const {
     register,
     formState: { errors },
     handleSubmit,
-  } = useForm<Tag>({
-    defaultValues: {
-      id: tag.id,
-      name: tag.name,
-      description: tag.description,
-      hexColor: tag.hexColor,
-    },
+  } = useForm<Process>({
+    defaultValues: process,
   })
 
   return (
     <Modal onClickOverlay={handleToggle}>
       <section className="w-96">
-        <h3 className="text-2xl mb-1">{isEditing ? 'Edit tag' : 'New tag'}</h3>
+        <h3 className="text-2xl mb-1">
+          {isEditing ? 'Edit process' : 'New process'}
+        </h3>
         <h4 className="text-xs mb-4 text-gray-400">
-          {isEditing ? 'Change tag information' : 'Create new tag'}
+          {isEditing ? 'Change process information' : 'Create new process'}
         </h4>
         <form
-          onSubmit={handleSubmit((data) => handleTagForm(data))}
+          onSubmit={handleSubmit((data) => handleProcessForm(data))}
           className="flex flex-col gap-3"
         >
-          <input type="hidden" {...register('id')} />
+          {isEditing && <input type="hidden" {...register('id')} />}
+
+          <input type="hidden" {...register('createdBy')} />
+          <input type="hidden" {...register('createdOn')} />
+
           <InputFormLabel
             id="name"
             label="Name"
@@ -78,12 +72,6 @@ export const EditTagModal = ({
             InputContainerClassType={errors.description ? 'error' : 'success'}
             error={errors.description?.message}
             {...register('description', validations.description)}
-          />
-
-          <InputColorPicker
-            label="Hex color"
-            includeHex={true}
-            {...register('hexColor', validations.hexColor)}
           />
 
           <div className="grid grid-cols-2 gap-5">

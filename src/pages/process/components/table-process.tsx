@@ -1,4 +1,3 @@
-import { Badge } from '../../../components/common/badge'
 import { DeleteButton } from '../../../components/common/buttons/delete-button'
 import { EditButton } from '../../../components/common/buttons/edit-button'
 import { TableBody } from '../../../components/common/table/table-body'
@@ -7,21 +6,20 @@ import { TableHeader } from '../../../components/common/table/table-header'
 import { TableHeaderCell } from '../../../components/common/table/table-header-cell'
 import { TableHeaderSortCell } from '../../../components/common/table/table-header-sort-cell'
 import { TableRow } from '../../../components/common/table/table-row'
-import { Tag } from '../interfaces/Tag'
-import { ColorBadge } from './color-badge'
+import { Process } from '../interfaces/process'
 
-interface TableTagsProps {
-  tags: Tag[]
-  handleSelectTag: (id: number) => void
-  handleSortColumn: (key: keyof Tag) => void
-  handleDeleteTag: (id: number) => void
+interface TableProcessProps {
+  processes: Process[]
+  handleSelectProcess: (id: number) => void
+  handleSortColumn: (key: keyof Process) => void
+  handleDeleteProcess: (id: number) => void
 }
-export const TableTags = ({
-  tags,
-  handleSelectTag,
+export const TableProcess = ({
+  processes,
+  handleSelectProcess,
   handleSortColumn,
-  handleDeleteTag,
-}: TableTagsProps) => {
+  handleDeleteProcess,
+}: TableProcessProps) => {
   return (
     <table className="w-full text-left">
       <TableHeader>
@@ -35,28 +33,28 @@ export const TableTags = ({
           >
             Description
           </TableHeaderSortCell>
-          <TableHeaderCell>Color</TableHeaderCell>
-          <TableHeaderCell>Preview</TableHeaderCell>
+          <TableHeaderSortCell onClick={() => handleSortColumn('createdOn')}>
+            Created On
+          </TableHeaderSortCell>
+          <TableHeaderSortCell onClick={() => handleSortColumn('createdBy')}>
+            Created By
+          </TableHeaderSortCell>
           <TableHeaderCell>Actions</TableHeaderCell>
         </tr>
       </TableHeader>
       <TableBody>
-        {tags.map((tag) => (
-          <TableRow key={tag.id}>
-            <TableBodyCell>{tag.name}</TableBodyCell>
-            <TableBodyCell colSpan={2}>{tag.description}</TableBodyCell>
-            <TableBodyCell>
-              <ColorBadge color={tag.hexColor} />
-            </TableBodyCell>
-            <TableBodyCell>
-              <Badge color={tag.hexColor}>{tag.name}</Badge>
-            </TableBodyCell>
+        {processes.map((process) => (
+          <TableRow key={process.id}>
+            <TableBodyCell>{process.name}</TableBodyCell>
+            <TableBodyCell colSpan={2}>{process.description}</TableBodyCell>
+            <TableBodyCell>{process.createdOn}</TableBodyCell>
+            <TableBodyCell>{process.creator?.name ?? 'N/D'}</TableBodyCell>
             <TableBodyCell>
               <div role="group" className="flex flex-row gap-4 items-center">
-                <EditButton onClick={() => handleSelectTag(tag.id)}>
+                <EditButton onClick={() => handleSelectProcess(process.id)}>
                   Edit
                 </EditButton>
-                <DeleteButton onClick={() => handleDeleteTag(tag.id)}>
+                <DeleteButton onClick={() => handleDeleteProcess(process.id)}>
                   Delete
                 </DeleteButton>
               </div>

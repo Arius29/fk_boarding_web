@@ -7,6 +7,8 @@ const routes = {
   NOTIFICATIONS_PAGE_URL: '/notifications',
   SHERPAS_PROCESS_PAGE_URL: '/sherpas/process',
   SHERPAS_PAGE_URL: '/sherpas',
+  EDIT_SHERPA_PAGE_URL: '/sherpas/edit/:id',
+  ADD_SHERPA_PAGE_URL: '/sherpas/add',
 }
 
 export const {
@@ -18,4 +20,6 @@ export const {
   NOTIFICATIONS_PAGE_URL,
   SHERPAS_PROCESS_PAGE_URL,
   SHERPAS_PAGE_URL,
+  EDIT_SHERPA_PAGE_URL,
+  ADD_SHERPA_PAGE_URL,
 } = routes

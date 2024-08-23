@@ -1,45 +1,46 @@
 import { forwardRef } from 'react'
 
-interface InputFormLabelProps extends React.HTMLProps<HTMLInputElement> {
+interface SelectFormProps
+  extends React.SelectHTMLAttributes<HTMLSelectElement> {
   id: string
-  type?: string
   label?: string
   description?: string
+  error?: string
+  selectClassType?: SelectContainerClassType
   leftIcon?: React.ReactNode
   rightIcon?: React.ReactNode
-  error?: string
-  stylesFieldset?: React.CSSProperties
-  InputContainerClassType?: InputContainerClassType
+  children: React.ReactNode
 }
 
-type InputContainerClassType = 'error' | 'success'
+type SelectContainerClassType = 'error' | 'success'
 
-const INPUT_CONTAINER_CLASSNAMES = {
+const SELECT_CONTAINER_CLASSNAMES = {
   error:
     'flex flex-row gap-3 items-center rounded w-full border border-red-300 bg-white text-red-500 relative',
   success:
     'flex flex-row gap-3 items-center rounded border border-gray-200 hover:border-gray-950 active:border-gray-950 focus:border-gray-950 bg-white text-gray-950 hover:placeholder-gray-950 active:placeholder-gray-950 focus:placeholder-gray-950 relative',
 }
 
-export const InputFormLabel = forwardRef<HTMLInputElement, InputFormLabelProps>(
+export const SelectForm = forwardRef<HTMLSelectElement, SelectFormProps>(
   (
     {
       id,
       label,
       description,
+      error,
+      selectClassType = 'success',
       leftIcon,
       rightIcon,
-      stylesFieldset,
-      InputContainerClassType: InputClassType = 'success',
-      error,
+      children,
       ...props
     },
     ref
   ) => {
-    const inputContainerClassName = INPUT_CONTAINER_CLASSNAMES[InputClassType]
+    const selectContainerClassName =
+      SELECT_CONTAINER_CLASSNAMES[selectClassType]
 
     return (
-      <fieldset className="flex flex-col gap-2" style={stylesFieldset}>
+      <fieldset className="flex flex-col gap-2">
         {label && (
           <label
             htmlFor={id}
@@ -48,15 +49,17 @@ export const InputFormLabel = forwardRef<HTMLInputElement, InputFormLabelProps>(
             {label}
           </label>
         )}
-        <div className={inputContainerClassName}>
+        <div className={selectContainerClassName}>
           {leftIcon}
-          <input
+          <select
+            id={id}
             ref={ref}
             {...props}
-            id={id}
-            className="placeholder-gray-400 bg-transparent w-full inline-block p-2 ring-0 outline-none"
             aria-invalid={error ? 'true' : 'false'}
-          />
+            className="bg-transparent w-full inline-block p-2 ring-0 outline-none"
+          >
+            {children}
+          </select>
           {rightIcon}
         </div>
         {description && (
