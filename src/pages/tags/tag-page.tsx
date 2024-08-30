@@ -8,7 +8,8 @@ import { TablePagination } from '../../components/common/table/table-pagination'
 import { SearchBar } from '../../components/common/search/search-bar'
 import { PrimaryButton } from '../../components/common/buttons/primary-button'
 import { Title } from '../../components/common/core/title'
-import { tagsMocks } from '../../mocks/tag-mocks'
+import { useTagsApiQuery } from '../../hooks/use-tag-api-query'
+import { Toaster } from 'sonner'
 
 const initialStateTag: Tag = {
   id: 0,
@@ -35,7 +36,13 @@ export const TagPage = () => {
   const sortConfig = useRef<SortOrder>('asc')
   const isEditing = useRef<boolean>(false)
   const searchBarRef = useRef<HTMLInputElement>(null)
-  const [tags, setTags] = useState<Tag[]>(tagsMocks)
+  const {
+    tags,
+    setTags,
+    mutationAddTag,
+    mutationDeleteProcess,
+    mutationEditProcess,
+  } = useTagsApiQuery()
 
   const handleToggle = () => setShowModal(!showModal)
   const handleSelectTag = (id: number) => {
@@ -51,16 +58,14 @@ export const TagPage = () => {
     setTags(sortedTags)
   }
 
-  const handleAddTag = (tag: Tag) => {
-    console.log(tag)
-  }
-
-  const handleEditTag = (tag: Tag) => {
-    console.log(tag)
+  const handleTagForm = (tag: Tag) => {
+    if (isEditing.current) mutationEditProcess.mutate(tag)
+    else mutationAddTag.mutate(tag)
+    handleToggle()
   }
 
   const handleDeleteTag = (id: number) => {
-    console.log(id)
+    mutationDeleteProcess.mutate(id)
   }
 
   const handleSearch = (query: string) => {
@@ -76,6 +81,7 @@ export const TagPage = () => {
 
   return (
     <>
+      <Toaster position="top-right" richColors />
       <Title>Tags</Title>
       <header className="flex flex-row flex-nowrap justify-between items-center mb-8">
         <form
@@ -121,7 +127,7 @@ export const TagPage = () => {
           isEditing={isEditing.current}
           handleToggle={handleToggle}
           tag={isEditing.current ? selectedTag : initialStateTag}
-          handleTagForm={isEditing.current ? handleEditTag : handleAddTag}
+          handleTagForm={handleTagForm}
         />
       )}
     </>

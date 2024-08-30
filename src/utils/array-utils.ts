@@ -23,7 +23,7 @@ export const sortArray = <T extends { [key: string]: any }>(
 export const sortArrayDoubleKey = <T extends { [key: string]: any }>(
   array: T[],
   key1: keyof T,
-  key2: keyof T,
+  key2: string,
   order: SortOrder = 'asc'
 ): T[] => {
   return [...array].sort((a: T, b: T) => {

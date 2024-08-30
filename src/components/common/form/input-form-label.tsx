@@ -53,7 +53,6 @@ export const InputFormLabel = forwardRef<HTMLInputElement, InputFormLabelProps>(
           <input
             ref={ref}
             {...props}
-            id={id}
             className="placeholder-gray-400 bg-transparent w-full inline-block p-2 ring-0 outline-none"
             aria-invalid={error ? 'true' : 'false'}
           />

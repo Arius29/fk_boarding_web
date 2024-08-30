@@ -1,4 +1,4 @@
-interface AvatarProps extends React.HTMLAttributes<HTMLSpanElement> {
+interface AvatarProps extends React.HTMLAttributes<HTMLImageElement> {
   name: string
   size?: Sizes
 }

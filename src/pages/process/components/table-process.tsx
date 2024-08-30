@@ -47,7 +47,9 @@ export const TableProcess = ({
           <TableRow key={process.id}>
             <TableBodyCell>{process.name}</TableBodyCell>
             <TableBodyCell colSpan={2}>{process.description}</TableBodyCell>
-            <TableBodyCell>{process.createdOn}</TableBodyCell>
+            <TableBodyCell>
+              {new Date(process.createdOn).toLocaleDateString()}
+            </TableBodyCell>
             <TableBodyCell>{process.creator?.name ?? 'N/D'}</TableBodyCell>
             <TableBodyCell>
               <div role="group" className="flex flex-row gap-4 items-center">

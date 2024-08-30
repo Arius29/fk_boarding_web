@@ -45,7 +45,6 @@ export const TextAreaForm = forwardRef<HTMLTextAreaElement, TextAreaFormProps>(
           </label>
         )}
         <textarea
-          id={id}
           ref={ref}
           {...props}
           className={textAreaContainerClassName}

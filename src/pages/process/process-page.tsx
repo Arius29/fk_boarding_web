@@ -8,18 +8,15 @@ import { EditProcessModal } from './components/edit-process-modal'
 import { sortArray, sortArrayDoubleKey } from '../../utils/array-utils'
 import { useTablePagination } from '../../hooks/use-table-pagination'
 import { TableProcess } from './components/table-process'
-import { processMocks } from '../../mocks/process-mocks'
-import { CreateProcess } from './interfaces/create-process'
-import { Type } from '../sherpas/interfaces/user'
-import { useMsal } from '@azure/msal-react'
-import { EditProcess } from './interfaces/edit-process'
+import { useProcessApiQuery } from '../../hooks/use-process-api-query'
+import { Toaster } from 'sonner'
 
 const initialStateProcess: Process = {
   id: 0,
   name: '',
   description: '',
   createdBy: '',
-  createdOn: '',
+  createdOn: new Date(),
 }
 
 type SortOrder = 'asc' | 'desc'
@@ -28,9 +25,22 @@ const filterProcesses = (processes: Process[], searchValue: string) => {
   return processes.filter((process) => {
     return (
       process.name.toLowerCase().includes(searchValue.toLowerCase()) ||
-      process.description.toLowerCase().includes(searchValue.toLowerCase())
+      process.description?.toLowerCase().includes(searchValue.toLowerCase())
     )
   })
+}
+
+const sortProcesses = (
+  key: keyof Process,
+  processes: Process[],
+  sortOrder: SortOrder
+) => {
+  switch (key) {
+    case 'createdBy':
+      return sortArrayDoubleKey(processes, 'creator', 'name', sortOrder)
+    default:
+      return sortArray(processes, key, sortOrder)
+  }
 }
 
 export const ProcessPage = () => {
@@ -38,14 +48,27 @@ export const ProcessPage = () => {
   const [searchValue, setSearchValue] = useState<string>('')
   const [selectedProcess, setSelectedProcess] =
     useState<Process>(initialStateProcess)
-  const [processes, setProcesses] = useState<Process[]>(processMocks)
   const sortConfig = useRef<SortOrder>('asc')
   const searchBarRef = useRef<HTMLInputElement>(null)
   const isEditing = useRef<boolean>(false)
-  const { accounts } = useMsal()
-  const account = accounts[0]
-
+  const {
+    processes,
+    setProcesses,
+    mutationAddProcess,
+    mutationEditProcess,
+    mutationDeleteProcess,
+  } = useProcessApiQuery(undefined, undefined, undefined, true, true)
   const handleToggle = () => setShowModal(!showModal)
+
+  const handleProcessForm = (process: Process) => {
+    if (isEditing.current) mutationEditProcess.mutate(process)
+    else mutationAddProcess.mutate(process)
+    handleToggle()
+  }
+
+  const handleDeleteProcess = (id: number) => {
+    mutationDeleteProcess.mutate(id)
+  }
 
   const handleSelectProcess = (id: number) => {
     const process = processes.find((process) => process.id === id)
@@ -55,48 +78,9 @@ export const ProcessPage = () => {
     handleToggle()
   }
 
-  console.log(account)
-
   const handleSortColumn = (key: keyof Process) => {
     sortConfig.current = sortConfig.current == 'asc' ? 'desc' : 'asc'
-    switch (key) {
-      case 'createdBy':
-        setProcesses(
-          sortArrayDoubleKey(processes, 'creator', 'name', sortConfig.current)
-        )
-        break
-      default:
-        setProcesses(sortArray(processes, key, sortConfig.current))
-        break
-    }
-  }
-
-  const handleAddProcess = (process: Process) => {
-    const createProcess: CreateProcess = {
-      name: process.name,
-      description: process.description,
-      createdBy: account?.homeAccountId,
-      createdOn: new Date().toISOString(),
-      avatar: '',
-      email: account?.username,
-      type: Type.Azure,
-      userName: account?.name,
-    }
-    console.log(createProcess)
-  }
-
-  const handleEditProcess = (process: Process) => {
-    const editProcess: EditProcess = {
-      id: process.id,
-      name: process.name,
-      description: process.description,
-    }
-
-    console.log(editProcess)
-  }
-
-  const handleDeleteProcess = (id: number) => {
-    console.log(id)
+    setProcesses(sortProcesses(key, processes, sortConfig.current))
   }
 
   const handleSearch = (query: string) => {
@@ -112,6 +96,7 @@ export const ProcessPage = () => {
 
   return (
     <>
+      <Toaster position="top-right" richColors />
       <Title>Process</Title>
       <header className="flex flex-row flex-nowrap justify-between items-center mb-8">
         <form
@@ -157,9 +142,7 @@ export const ProcessPage = () => {
           isEditing={isEditing.current}
           handleToggle={handleToggle}
           process={isEditing.current ? selectedProcess : initialStateProcess}
-          handleProcessForm={
-            isEditing.current ? handleEditProcess : handleAddProcess
-          }
+          handleProcessForm={handleProcessForm}
         />
       )}
     </>

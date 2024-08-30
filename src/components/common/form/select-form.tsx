@@ -52,7 +52,6 @@ export const SelectForm = forwardRef<HTMLSelectElement, SelectFormProps>(
         <div className={selectContainerClassName}>
           {leftIcon}
           <select
-            id={id}
             ref={ref}
             {...props}
             aria-invalid={error ? 'true' : 'false'}

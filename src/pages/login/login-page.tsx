@@ -12,7 +12,7 @@ export const LoginPage = () => {
   const handleLogin = () => {
     instance
       .loginRedirect({
-        scopes: [import.meta.env.VITE_APP_SCOPE],
+        scopes: [process.env.VITE_APP_SCOPE!],
       })
       .then(() => {
         navigate(TASKS_PAGE_URL)

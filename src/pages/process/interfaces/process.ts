@@ -5,6 +5,6 @@ export interface Process {
   name: string
   description: string
   createdBy: string
-  createdOn: string
+  createdOn: Date
   creator?: User
 }

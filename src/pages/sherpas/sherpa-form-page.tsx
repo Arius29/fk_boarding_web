@@ -1,6 +1,4 @@
-import { useEffect } from 'react'
 import { Type, User } from './interfaces/user'
-import { userMocks } from '../../mocks/user-mocks'
 import { useParams } from 'react-router-dom'
 import { UploadFileInput } from '../../components/common/core/upload-file-input'
 import { AttachedFile } from '../../components/common/core/attached-file'
@@ -10,6 +8,9 @@ import { useForm } from 'react-hook-form'
 import { isDateBeforeTodayStr } from '../../utils/date-utils'
 import { SelectForm } from '../../components/common/form/select-form'
 import { TextAreaForm } from '../../components/common/form/text-area-form'
+import { useUsersApi } from '../../hooks/use-users-api'
+import { useMutation, useQuery } from 'react-query'
+import { toast, Toaster } from 'sonner'
 
 const validations = {
   uid: {
@@ -98,7 +99,7 @@ interface SherpaFormPageProps {
 
 export const SherpaFormPage = ({ mode = 'add' }: SherpaFormPageProps) => {
   const { id } = useParams()
-
+  const { getUsers, createUser, updateUser } = useUsersApi()
   const {
     register,
     formState: { errors },
@@ -111,29 +112,69 @@ export const SherpaFormPage = ({ mode = 'add' }: SherpaFormPageProps) => {
     },
   })
 
+  useQuery({
+    queryKey: 'user',
+    queryFn: () => getUsers(id),
+    staleTime: 300000,
+    cacheTime: 600000,
+    onSuccess: (data: User) => {
+      reset(data)
+    },
+    onError: () => {
+      toast.error('An error occurred while trying to get users')
+    },
+  })
+
+  const mutationAddUser = useMutation({
+    mutationFn: (user: User) => {
+      return createUser({
+        ...user,
+        type: Type.Temporally,
+      })
+    },
+    onSuccess: () => {
+      toast.success('User created successfully')
+    },
+    onError: () => {
+      toast.error(
+        'An error occurred while trying to create a user, please try again'
+      )
+    },
+  })
+
+  const mutationEditUser = useMutation({
+    mutationFn: (user: User) => {
+      return updateUser({
+        ...user,
+      })
+    },
+    onSuccess: () => {
+      toast.success('User updated successfully')
+    },
+    onError: () => {
+      toast.error(
+        'An error occurred while trying to update a user, please try again'
+      )
+    },
+  })
+
   const src =
     getValues('avatar') ||
     `https://ui-avatars.com/api/?name=${getValues('name')?.replace(' ', '+') || ''}&background=random`
 
+  console.log(src)
+
   const handleFormSubmit = (data: User) => {
     if (mode === 'add') {
-      console.log('Adding Sherpa:', data)
+      mutationAddUser.mutate(data)
     } else if (mode === 'edit') {
-      console.log('Editing Sherpa:', data)
+      mutationEditUser.mutate(data)
     }
   }
 
-  useEffect(() => {
-    if (mode === 'edit' && id) {
-      const user = userMocks.find((user) => user.id === id)
-      if (user) {
-        reset(user)
-      }
-    }
-  }, [mode, id])
-
   return (
     <>
+      <Toaster position="top-right" richColors />
       <Title>Sherpas / {mode === 'add' ? 'Add Sherpa' : 'Edit Sherpa'}</Title>
       <header className="grid grid-cols-8 mb-4">
         <img

@@ -15,6 +15,7 @@ import { TagPage } from '../pages/tags/tag-page'
 import { SherpasPage } from '../pages/sherpas/sherpas-page'
 import { ProcessPage } from '../pages/process/process-page'
 import { SherpaFormPage } from '../pages/sherpas/sherpa-form-page'
+import { SherpasProcessPage } from '../pages/sherpas-process/sherpas-process-page'
 
 export const privateRoutes: RouteObject[] = [
   PrivateRouteAsideMenu({
@@ -43,7 +44,7 @@ export const privateRoutes: RouteObject[] = [
   }),
   PrivateRouteAsideMenu({
     path: SHERPAS_PROCESS_PAGE_URL,
-    element: <h1>Sherpas process</h1>,
+    element: <SherpasProcessPage />,
   }),
   PrivateRouteAsideMenu({
     path: EDIT_SHERPA_PAGE_URL,
