@@ -16,6 +16,7 @@ import { SherpasPage } from '../pages/sherpas/sherpas-page'
 import { ProcessPage } from '../pages/process/process-page'
 import { SherpaFormPage } from '../pages/sherpas/sherpa-form-page'
 import { SherpasProcessPage } from '../pages/sherpas-process/sherpas-process-page'
+import { NotificationsPage } from '../pages/notifications/notifications-page'
 
 export const privateRoutes: RouteObject[] = [
   PrivateRouteAsideMenu({
@@ -40,7 +41,7 @@ export const privateRoutes: RouteObject[] = [
   }),
   PrivateRouteAsideMenu({
     path: NOTIFICATIONS_PAGE_URL,
-    element: <h1>Notifications</h1>,
+    element: <NotificationsPage />,
   }),
   PrivateRouteAsideMenu({
     path: SHERPAS_PROCESS_PAGE_URL,

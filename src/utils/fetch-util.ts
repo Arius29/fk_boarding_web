@@ -19,6 +19,7 @@ export const fetchApi = async <T>(
   if (!response.ok) {
     throw new Error(`Status Code received: ${response.status}`)
   }
+
   const data = await response.json()
   return data.result
 }
