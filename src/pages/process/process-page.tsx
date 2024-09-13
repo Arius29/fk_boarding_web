@@ -57,7 +57,7 @@ export const ProcessPage = () => {
     mutationAddProcess,
     mutationEditProcess,
     mutationDeleteProcess,
-  } = useProcessApiQuery(undefined, undefined, undefined, true, true)
+  } = useProcessApiQuery(undefined, false, false, true, false, false, false)
   const handleToggle = () => setShowModal(!showModal)
 
   const handleProcessForm = (process: Process) => {

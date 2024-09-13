@@ -8,9 +8,11 @@ export const useProcessApi = () => {
     includeCategories: boolean = false,
     includeWorkItems: boolean = false,
     includeUsers: boolean = false,
+    includeTags: boolean = false,
+    includeProcessUsers: boolean = false,
     omitWorkItemsAbandoned: boolean = false
   ) => {
-    const url = `${process.env.VITE_API_URL!}/api/process/get?${processId ? `processId=${processId}&` : ''}includeCategories=${includeCategories}&includeWorkItems=${includeWorkItems}&includeUsers=${includeUsers}&omitWorkItemsAbandoned=${omitWorkItemsAbandoned}`
+    const url = `${process.env.VITE_API_URL!}/api/process/get?${processId ? `processId=${processId}&` : ''}includeCategories=${includeCategories}&includeWorkItems=${includeWorkItems}&includeUsers=${includeUsers}&includeTags=${includeTags}&includeProcessUsers=${includeProcessUsers}&omitWorkItemsAbandoned=${omitWorkItemsAbandoned}`
 
     const response: Process[] = await fetchApi(url, 'GET', null)
 

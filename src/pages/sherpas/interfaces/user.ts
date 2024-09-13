@@ -5,7 +5,7 @@ export enum Type {
 
 export interface User {
   id: string
-  uid: string
+  uid?: string
   email: string
   name: string
   avatar: string

@@ -2,15 +2,31 @@ import { useMutation, useQuery } from 'react-query'
 import { useProcessApi } from './use-process-api'
 import { Process } from '../pages/process/interfaces/process'
 import { useMsal } from '@azure/msal-react'
-import { Type } from '../pages/sherpas/interfaces/user'
+import { Type, User } from '../pages/sherpas/interfaces/user'
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
+import { getAvatarRandom } from '../utils/avatar-util'
+import { AccountInfo } from '@azure/msal-browser'
+import { ProcessBase } from '../pages/process/interfaces/process-base'
+
+const createBaseUser = (account: AccountInfo): User => {
+  return {
+    id: account?.homeAccountId,
+    name:
+      account?.name || account?.username.split('@')[0].replace('.', '&') || '',
+    avatar: getAvatarRandom(account?.name?.replace(' ', '+') || 'Sherpa User'),
+    email: account?.username,
+    type: Type.Azure,
+  }
+}
 
 export const useProcessApiQuery = (
   processId?: number,
   includeCategories: boolean = false,
   includeWorkItems: boolean = false,
   includeUsers: boolean = false,
+  includeTags: boolean = false,
+  includeProcessUsers: boolean = false,
   omitWorkItemsAbandoned: boolean = false
 ) => {
   const [processes, setProcesses] = useState<Process[]>([])
@@ -20,13 +36,15 @@ export const useProcessApiQuery = (
   const { getProceses, createProcess, updateProcess, deleteProcess } =
     useProcessApi()
   const { data, isLoading, error } = useQuery({
-    queryKey: 'processes',
+    queryKey: ['processes', processId],
     queryFn: () =>
       getProceses(
         processId,
         includeCategories,
         includeWorkItems,
         includeUsers,
+        includeTags,
+        includeProcessUsers,
         omitWorkItemsAbandoned
       ),
     staleTime: 300000,
@@ -41,16 +59,19 @@ export const useProcessApiQuery = (
       return createProcess({
         name: process.name,
         description: process.description,
-        createdBy: account?.homeAccountId,
+        creator: createBaseUser(account),
         createdOn: new Date().toISOString(),
-        avatar: '',
-        email: account?.username,
-        type: Type.Azure,
-        userName: account?.name,
       })
     },
-    onSuccess: (data) => {
-      setProcesses([...processes, data])
+
+    onSuccess: (data: ProcessBase) => {
+      setProcesses([
+        ...processes,
+        {
+          ...data,
+          creator: createBaseUser(account),
+        },
+      ])
       toast.success('Process created successfully')
     },
     onError: () => {
@@ -68,7 +89,7 @@ export const useProcessApiQuery = (
         description: process.description,
       })
     },
-    onSuccess: (data) => {
+    onSuccess: (data: ProcessBase) => {
       setProcesses(
         processes.map((process) => {
           if (process.id === data.id) {
@@ -90,7 +111,7 @@ export const useProcessApiQuery = (
     mutationFn: (id: number) => {
       return deleteProcess(id)
     },
-    onSuccess: (data) => {
+    onSuccess: (data: ProcessBase) => {
       setProcesses(processes.filter((process) => process.id !== data.id))
       toast.success('Process deleted successfully')
     },

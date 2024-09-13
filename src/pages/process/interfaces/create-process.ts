@@ -1,12 +1,8 @@
-import { Type } from '../../sherpas/interfaces/user'
+import { UserBase } from '../../sherpas/interfaces/user-base'
 
 export interface CreateProcess {
   name: string
   description: string
-  createdBy: string
   createdOn?: string
-  userName?: string
-  email?: string
-  avatar?: string
-  type?: Type
+  creator?: UserBase
 }

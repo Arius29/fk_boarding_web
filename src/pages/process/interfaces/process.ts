@@ -1,10 +1,6 @@
 import { User } from '../../sherpas/interfaces/user'
+import { ProcessBase } from './process-base'
 
-export interface Process {
-  id: number
-  name: string
-  description: string
-  createdBy: string
-  createdOn: Date
+export interface Process extends ProcessBase {
   creator?: User
 }

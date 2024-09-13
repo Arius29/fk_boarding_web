@@ -1,3 +1,5 @@
+import { getAvatarRandom } from '../../../utils/avatar-util'
+
 interface AvatarProps extends React.HTMLAttributes<HTMLImageElement> {
   name: string
   size?: Sizes
@@ -22,7 +24,7 @@ const getClassName = (size: Sizes) => {
 export const Avatar = ({ name, size = 'md', style, ...props }: AvatarProps) => {
   return (
     <img
-      src={`https://ui-avatars.com/api/?name=${name}&background=random`}
+      src={getAvatarRandom(name)}
       style={{ ...style }}
       className={getClassName(size)}
       {...props}
