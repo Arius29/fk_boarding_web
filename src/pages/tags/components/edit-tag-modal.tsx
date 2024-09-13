@@ -2,7 +2,7 @@ import { useForm } from 'react-hook-form'
 import { InputColorPicker } from '../../../components/common/form/input-color-picker'
 import { InputFormLabel } from '../../../components/common/form/input-form-label'
 import { Modal } from '../../../components/common/modal/modal'
-import { Tag } from '../interfaces/Tag'
+import { Tag } from '../interfaces/tag'
 interface EditTagModalProps {
   isEditing: boolean
   tag: Tag

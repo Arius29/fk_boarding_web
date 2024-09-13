@@ -7,7 +7,7 @@ import { TableHeader } from '../../../components/common/table/table-header'
 import { TableHeaderCell } from '../../../components/common/table/table-header-cell'
 import { TableHeaderSortCell } from '../../../components/common/table/table-header-sort-cell'
 import { TableRow } from '../../../components/common/table/table-row'
-import { Tag } from '../interfaces/Tag'
+import { Tag } from '../interfaces/tag'
 import { ColorBadge } from './color-badge'
 
 interface TableTagsProps {

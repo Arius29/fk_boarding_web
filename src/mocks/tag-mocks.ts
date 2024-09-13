@@ -1,4 +1,4 @@
-import { Tag } from '../pages/tags/interfaces/Tag'
+import { Tag } from '../pages/tags/interfaces/tag'
 
 export const tagsMocks: Tag[] = [
   {

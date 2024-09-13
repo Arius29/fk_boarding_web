@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Tag } from '../pages/tags/interfaces/Tag'
+import { Tag } from '../pages/tags/interfaces/tag'
 import { useMutation, useQuery } from 'react-query'
 import { useTagsApi } from './use-tags-api'
 import { toast } from 'sonner'

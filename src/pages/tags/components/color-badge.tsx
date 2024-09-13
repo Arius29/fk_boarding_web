@@ -2,7 +2,7 @@ import { IconCircleFilled } from '@tabler/icons-react'
 import { hexToRgba } from '../../../utils/color-converter'
 
 interface ColorBadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
-  color: string
+  color?: string
   opacity?: number
 }
 

@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react'
 import { EditTagModal } from './components/edit-tag-modal'
 import { TableTags } from './components/table-tags'
-import { Tag } from './interfaces/Tag'
+import { Tag } from './interfaces/tag'
 import { sortArray } from '../../utils/array-utils'
 import { useTablePagination } from '../../hooks/use-table-pagination'
 import { TablePagination } from '../../components/common/table/table-pagination'
@@ -24,7 +24,7 @@ const filterTags = (tags: Tag[], searchValue: string) => {
   return tags.filter((tag) => {
     return (
       tag.name.toLowerCase().includes(searchValue.toLowerCase()) ||
-      tag.description.toLowerCase().includes(searchValue.toLowerCase())
+      tag.description?.toLowerCase().includes(searchValue.toLowerCase())
     )
   })
 }

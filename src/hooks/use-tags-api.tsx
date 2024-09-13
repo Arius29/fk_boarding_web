@@ -1,6 +1,6 @@
 import { CreateTag } from '../pages/tags/interfaces/create-tag'
 import { EditTag } from '../pages/tags/interfaces/edit-tag'
-import { Tag } from '../pages/tags/interfaces/Tag'
+import { Tag } from '../pages/tags/interfaces/tag'
 import { fetchApi } from '../utils/fetch-util'
 export const useTagsApi = () => {
   const getTags = async () => {
