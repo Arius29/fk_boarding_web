@@ -76,6 +76,7 @@ export const EditCategoryModal = ({
             control={control}
             error={errors.processId?.message}
             value={category.process?.name}
+            disabled={isEditing}
           />
 
           <div className="grid grid-cols-2 gap-5">

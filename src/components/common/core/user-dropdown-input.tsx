@@ -1,23 +1,11 @@
 import { IconUsersPlus } from '@tabler/icons-react'
 import { useState, useMemo, useCallback } from 'react'
-//import { useEmployeeApi } from '../../../hooks/use-employee-api'
-//import { useQuery } from 'react-query'
 import { Avatar } from '../layout/avatar'
-//import { Employee } from '../../../interfaces/employee'
 import { useDebounce } from 'use-debounce'
 import { Control, Controller } from 'react-hook-form'
 import { ProcessUser } from '../../../pages/sherpas-process/interfaces/process-user'
 import { useUsersApiQuery } from '../../../hooks/use-users-api-query'
 import { User } from '../../../pages/sherpas/interfaces/user'
-
-// const filterEmployees = (employees: Employee[], searchValue: string) => {
-//   if (!searchValue) return employees
-//   return employees.filter((process) => {
-//     return `${process.firstName} ${process.lastName}`
-//       .toLowerCase()
-//       .includes(searchValue.toLowerCase())
-//   })
-// }
 
 const filterUsers = (users: User[], searchValue: string) => {
   if (!searchValue) return users
@@ -44,6 +32,13 @@ interface UserDropdownProps {
   containerStyles?: React.CSSProperties
   control: Control<ProcessUser>
   error?: string
+  disabled?: boolean
+}
+
+const CLASS_NAMES = {
+  base: 'ring-0 outline-none border-b p-2 inline-block w-full',
+  disable:
+    'ring-0 outline-none border-b border-gray-300 p-2 inline-block w-full text-gray-300',
 }
 
 export const UserDropdownInput = ({
@@ -51,24 +46,14 @@ export const UserDropdownInput = ({
   containerStyles,
   control,
   error,
+  disabled = false,
 }: UserDropdownProps) => {
   const [searchValue, setSearchValue] = useState(value)
   const [showModal, setShowModal] = useState(false)
-  // const { getEmployeeList } = useEmployeeApi()
-
-  // const employeeListQuery = useQuery(
-  //   ['employeeList'],
-  //   () => getEmployeeList('750'),
-  //   { staleTime: 300000, cacheTime: 600000 }
-  // )
 
   const { users } = useUsersApiQuery()
 
   const [debouncedSearchValue] = useDebounce(searchValue, 300)
-
-  // const filteredEmployees = useMemo(() => {
-  //   return filterEmployees(employeeListQuery.data || [], debouncedSearchValue)
-  // }, [employeeListQuery.data, debouncedSearchValue])
 
   const filteredUsers = useMemo(() => {
     return filterUsers(users || [], debouncedSearchValue)
@@ -78,7 +63,6 @@ export const UserDropdownInput = ({
     (userId: string) => {
       const user = filteredUsers.find((user) => user.id === userId)
       if (!user) return
-      //const employeeName = `${employee.firstName} ${employee.lastName}`
       setSearchValue(user.name)
       setShowModal(false)
     },
@@ -112,9 +96,13 @@ export const UserDropdownInput = ({
               type="text"
               placeholder="Employee"
               autoComplete="off"
-              className="ring-0 outline-none border-b p-2 inline-block w-full"
-              onChange={onChangeSearchValue}
-              onClick={() => setShowModal(!showModal)}
+              className={disabled ? CLASS_NAMES.disable : CLASS_NAMES.base}
+              onChange={(e) => {
+                if (!disabled) onChangeSearchValue(e)
+              }}
+              onClick={() => {
+                if (!disabled) setShowModal(true)
+              }}
               value={searchValue}
             />
             {showModal && filteredUsers.length > 0 && (
@@ -140,12 +128,7 @@ export const UserDropdownInput = ({
                         href="#"
                         className="flex items-center px-4 py-2 hover:bg-gray-100 gap-2 last:rounded-lg"
                       >
-                        <Avatar
-                          //name={`${employee.firstName} ${employee.lastName}`}
-                          name={employee.name}
-                          size="xs"
-                        />
-                        {/* {`${employee.firstName} ${employee.lastName}`} */}
+                        <Avatar name={employee.name} size="xs" />
                         {employee.name}
                       </a>
                     </li>

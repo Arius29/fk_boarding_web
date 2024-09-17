@@ -50,6 +50,7 @@ export const EditProcessSherpaModal = ({
             control={control}
             error={errors.userId?.message}
             value={processUser.user?.name}
+            disabled={isEditing}
           />
           <ProcessDropdownInput
             inputName="processId"
@@ -57,6 +58,7 @@ export const EditProcessSherpaModal = ({
             error={errors.processId?.message}
             value={processUser.process?.name}
             control={control}
+            disabled={isEditing}
           />
 
           {!isEditing && (

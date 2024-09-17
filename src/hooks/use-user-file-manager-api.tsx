@@ -11,11 +11,11 @@ export const useUserFileManagerApi = () => {
   }
 
   const uploadUserFile = async (file: File, userId: string) => {
-    const url = `${process.env.VITE_API_URL!}/api/process/create`
-    const response: string = await fetchFromFormData(url, {
-      file,
-      userId,
-    })
+    const url = `${process.env.VITE_API_URL!}/api/userfilemanager/upload`
+    const formData = new FormData()
+    formData.append('file', file)
+    formData.append('userId', userId)
+    const response: string = await fetchFromFormData(url, formData)
     return response
   }
 

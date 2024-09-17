@@ -26,24 +26,23 @@ export const useUserFileManagerApiQuery = (userId: string) => {
         createUserFile.userId ?? userId
       )
     },
-    onSuccess: (fileName: string, createUserFile: CreateUserFile) => {
-      console.log(fileName)
-      console.log(createUserFile)
-      // const reader = new FileReader()
-      // reader.onloadend = () => {
-      //   setUserFiles([
-      //     ...userFiles,
-      //     {
-      //       fileName: fileName,
-      //       contentType: createUserFile.file.type,
-      //       fileData: reader.result as string,
-      //     },
-      //   ])
+    onSuccess: (fileName: string, context: CreateUserFile) => {
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        const result = reader.result as string
+        setUserFiles((prev) => [
+          ...prev,
+          {
+            fileName: fileName,
+            contentType: context.file.type,
+            fileData: result.split(',')[1],
+          },
+        ])
 
-      //   toast.success('User file created successfully')
-      // }
+        toast.success('User file created successfully')
+      }
 
-      // reader.readAsDataURL(createUserFile.file)
+      reader.readAsDataURL(context.file)
     },
     onError: () => {
       toast.error(
@@ -56,8 +55,10 @@ export const useUserFileManagerApiQuery = (userId: string) => {
     mutationFn: (userFileId: string) => {
       return deleteUserFile(userFileId)
     },
-    onSuccess: (data: string) => {
-      setUserFiles(userFiles.filter((userFile) => userFile.fileName !== data))
+    onSuccess: (userFileId: string) => {
+      setUserFiles(
+        userFiles.filter((userFile) => userFile.fileName !== userFileId)
+      )
       toast.success('User file deleted successfully')
     },
     onError: () => {

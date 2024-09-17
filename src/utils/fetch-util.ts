@@ -24,20 +24,19 @@ export const fetchApi = async <T>(
   return data.result
 }
 
-export const fetchFromFormData = async <T>(
+export const fetchFromFormData = async (
   url: string,
-  body: T
+  body: FormData
   //token?: string
 ) => {
   const headers = new Headers({
-    'Content-Type': 'multipart/form-data',
     // Authorization: `Bearer ${token}`,
   })
 
   const requestOptions = {
     method: 'POST',
     headers: headers,
-    body: body && JSON.stringify(body),
+    body: body,
   }
 
   const response = await fetch(url, requestOptions)

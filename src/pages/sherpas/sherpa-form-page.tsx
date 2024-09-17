@@ -12,6 +12,7 @@ import { useUsersApi } from '../../hooks/use-users-api'
 import { useMutation, useQuery } from 'react-query'
 import { toast, Toaster } from 'sonner'
 import { getAvatarRandom } from '../../utils/avatar-util'
+import { useUserFileManagerApiQuery } from '../../hooks/use-user-file-manager-api-query'
 
 const validations = {
   uid: {
@@ -101,6 +102,8 @@ interface SherpaFormPageProps {
 export const SherpaFormPage = ({ mode = 'add' }: SherpaFormPageProps) => {
   const { id } = useParams()
   const { getUsers, createUser, updateUser } = useUsersApi()
+  const { userFiles, mutationUploadUserFile, mutationDeleteUserFile } =
+    useUserFileManagerApiQuery(id ?? '')
   const {
     register,
     formState: { errors },
@@ -170,6 +173,14 @@ export const SherpaFormPage = ({ mode = 'add' }: SherpaFormPageProps) => {
     } else if (mode === 'edit') {
       mutationEditUser.mutate(data)
     }
+  }
+
+  const handleDeleteUserFile = (fileName: string) => {
+    mutationDeleteUserFile.mutate(fileName)
+  }
+
+  const handleUploadUserFile = (file: File) => {
+    mutationUploadUserFile.mutate({ file, userId: id })
   }
 
   return (
@@ -303,12 +314,16 @@ export const SherpaFormPage = ({ mode = 'add' }: SherpaFormPageProps) => {
           <aside className="overflow-y-auto">
             <h3 className="text-xl mb-3">Upload files</h3>
             <form className="flex flex-col gap-3">
-              <UploadFileInput />
-              <AttachedFile
-                fileName="test.pdf"
-                fileStatus="Uploaded"
-                progress={100}
-              />
+              <UploadFileInput handleUploadUserFile={handleUploadUserFile} />
+              {userFiles.map((userFile) => (
+                <AttachedFile
+                  key={userFile.fileName}
+                  userFile={userFile}
+                  fileStatus="Uploaded"
+                  progressValue={100}
+                  handleDeleteFile={handleDeleteUserFile}
+                />
+              ))}
             </form>
           </aside>
         ) : null}

@@ -1,10 +1,12 @@
 import { IconUpload } from '@tabler/icons-react'
 interface UploadFileInputProps
   extends React.InputHTMLAttributes<HTMLInputElement> {
+  handleUploadUserFile: (file: File) => void
   label?: string
 }
 export const UploadFileInput = ({
   label = 'Upload file',
+  handleUploadUserFile,
   ...props
 }: UploadFileInputProps) => {
   return (
@@ -15,7 +17,13 @@ export const UploadFileInput = ({
     >
       <IconUpload stroke={2} className="w-6 h-6" />
       <span>{label}</span>
-      <input id="file" type="file" className="hidden" {...props} />
+      <input
+        id="file"
+        type="file"
+        className="hidden"
+        {...props}
+        onChange={(e) => handleUploadUserFile(e.target.files![0])}
+      />
     </label>
   )
 }

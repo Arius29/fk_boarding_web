@@ -7,6 +7,7 @@ interface DropDownProps {
   label?: string
   description?: string
   error?: string
+  disabled?: boolean
   children: ({
     showModal,
     handleToggleModal,
@@ -17,12 +18,19 @@ interface DropDownProps {
   }) => JSX.Element
 }
 
+const CLASS_NAMES = {
+  base: 'flex flex-row items-center w-full border gap-3 relative outline-none ring-0 p-2 rounded hover:text-blue-550 active:text-blue-550 focus:text-blue-550 hover:border-blue-550 active:border-blue-550 focus:border-blue-550',
+  disable:
+    'flex flex-row items-center w-full border gap-3 relative outline-none ring-0 p-2 rounded text-gray-300 border-gray-300',
+}
+
 export const DropDownMenu = ({
   id,
   label,
   value,
   description,
   error,
+  disabled = false,
   children,
 }: DropDownProps) => {
   const [showModal, setShowModal] = useState(false)
@@ -46,8 +54,10 @@ export const DropDownMenu = ({
       </label>
       <button
         type="button"
-        onClick={handleToggleModal}
-        className="flex flex-row items-center w-full border gap-3 relative outline-none ring-0 p-2 rounded hover:text-blue-550 active:text-blue-550 focus:text-blue-550 hover:border-blue-550 active:border-blue-550 focus:border-blue-550"
+        onClick={() => {
+          if (!disabled) handleToggleModal()
+        }}
+        className={disabled ? CLASS_NAMES.disable : CLASS_NAMES.base}
       >
         <IconCircleFilled className="w-4 h-4" />
         <span>{selectedValue}</span>

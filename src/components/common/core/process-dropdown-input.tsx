@@ -8,6 +8,7 @@ interface ProcessDropdownInputProps<T extends FieldValues> {
   control: Control<T>
   error?: string
   value?: string
+  disabled?: boolean
 }
 
 const validations = {
@@ -25,6 +26,7 @@ export const ProcessDropdownInput = <T extends FieldValues>({
   error,
   value,
   control,
+  disabled = false,
 }: ProcessDropdownInputProps<T>) => {
   return (
     <Controller
@@ -37,6 +39,7 @@ export const ProcessDropdownInput = <T extends FieldValues>({
           id={inputName}
           value={value || 'Select process'}
           error={error}
+          disabled={disabled}
         >
           {({ showModal, handleSelectValue }) =>
             showModal ? (
@@ -45,8 +48,10 @@ export const ProcessDropdownInput = <T extends FieldValues>({
                   {processes.map((process) => (
                     <DropDownMenuItem
                       onClick={() => {
-                        field.onChange(process.id)
-                        handleSelectValue(process.name)
+                        if (!disabled) {
+                          field.onChange(process.id)
+                          handleSelectValue(process.name)
+                        }
                       }}
                       key={process.id}
                       type={field.value === process.id ? 'active' : 'base'}
