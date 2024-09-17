@@ -1,6 +1,7 @@
 import { RouteObject } from 'react-router-dom'
 import {
   ADD_SHERPA_PAGE_URL,
+  CATEGORIES_PAGE_URL,
   EDIT_SHERPA_PAGE_URL,
   HOME_PAGE_URL,
   NOTIFICATIONS_PAGE_URL,
@@ -17,6 +18,7 @@ import { ProcessPage } from '../pages/process/process-page'
 import { SherpaFormPage } from '../pages/sherpas/sherpa-form-page'
 import { SherpasProcessPage } from '../pages/sherpas-process/sherpas-process-page'
 import { NotificationsPage } from '../pages/notifications/notifications-page'
+import { WorkItemCategoryPage } from '../pages/categories/work-item-category-page'
 
 export const privateRoutes: RouteObject[] = [
   PrivateRouteAsideMenu({
@@ -34,6 +36,10 @@ export const privateRoutes: RouteObject[] = [
   PrivateRouteAsideMenu({
     path: PROCESS_PAGE_URL,
     element: <ProcessPage />,
+  }),
+  PrivateRouteAsideMenu({
+    path: CATEGORIES_PAGE_URL,
+    element: <WorkItemCategoryPage />,
   }),
   PrivateRouteAsideMenu({
     path: TAGS_PAGE_URL,

@@ -11,6 +11,7 @@ import { TextAreaForm } from '../../components/common/form/text-area-form'
 import { useUsersApi } from '../../hooks/use-users-api'
 import { useMutation, useQuery } from 'react-query'
 import { toast, Toaster } from 'sonner'
+import { getAvatarRandom } from '../../utils/avatar-util'
 
 const validations = {
   uid: {
@@ -113,12 +114,13 @@ export const SherpaFormPage = ({ mode = 'add' }: SherpaFormPageProps) => {
   })
 
   useQuery({
-    queryKey: 'user',
+    queryKey: ['user', id],
     queryFn: () => getUsers(id),
     staleTime: 300000,
     cacheTime: 600000,
-    onSuccess: (data: User) => {
-      reset(data)
+    onSuccess: (data) => {
+      const user = data.find((user) => user.id === id)
+      if (user) reset(user)
     },
     onError: () => {
       toast.error('An error occurred while trying to get users')
@@ -129,6 +131,7 @@ export const SherpaFormPage = ({ mode = 'add' }: SherpaFormPageProps) => {
     mutationFn: (user: User) => {
       return createUser({
         ...user,
+        uid: user.uid || '',
         type: Type.Temporally,
       })
     },
@@ -159,10 +162,7 @@ export const SherpaFormPage = ({ mode = 'add' }: SherpaFormPageProps) => {
   })
 
   const src =
-    getValues('avatar') ||
-    `https://ui-avatars.com/api/?name=${getValues('name')?.replace(' ', '+') || ''}&background=random`
-
-  console.log(src)
+    getValues('avatar') || getAvatarRandom(getValues('name') || 'Sherpa User')
 
   const handleFormSubmit = (data: User) => {
     if (mode === 'add') {

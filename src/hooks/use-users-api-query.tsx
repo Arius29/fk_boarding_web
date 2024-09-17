@@ -3,6 +3,7 @@ import { Type, User } from '../pages/sherpas/interfaces/user'
 import { useUsersApi } from './use-users-api'
 import { toast } from 'sonner'
 import { useEffect, useState } from 'react'
+import { getAvatarRandom } from '../utils/avatar-util'
 
 export const useUsersApiQuery = (
   userId?: string,
@@ -14,7 +15,7 @@ export const useUsersApiQuery = (
   const [users, setUsers] = useState<User[]>([])
   const { getUsers, createUser, updateUser, deleteUser } = useUsersApi()
   const { data, isLoading, error } = useQuery({
-    queryKey: 'users',
+    queryKey: ['users', userId],
     queryFn: () =>
       getUsers(
         userId,
@@ -36,9 +37,11 @@ export const useUsersApiQuery = (
         email: user.email,
         name: user.name,
         type: Type.Temporally,
-        uid: user.uid,
+        uid: user.uid ?? '',
         address: user.address,
-        avatar: user.avatar,
+        avatar:
+          user.avatar ??
+          getAvatarRandom(user.name.replace(' ', '+') || 'Sherpa User'),
         phoneNumber: user.phoneNumber,
         matiralStatus: user.matiralStatus,
         haveChildren: user.haveChildren,
@@ -67,7 +70,9 @@ export const useUsersApiQuery = (
         name: user.name,
         uid: user.uid,
         address: user.address,
-        avatar: user.avatar,
+        avatar:
+          user.avatar ??
+          getAvatarRandom(user.name.replace(' ', '+') || 'Sherpa User'),
         phoneNumber: user.phoneNumber,
         matiralStatus: user.matiralStatus,
         haveChildren: user.haveChildren,

@@ -1,14 +1,16 @@
 import { CreateProcessUser } from '../pages/sherpas-process/interfaces/create-process-user'
 import { EditProcessUser } from '../pages/sherpas-process/interfaces/edit-process-user'
 import { ProcessUser } from '../pages/sherpas-process/interfaces/process-user'
+import { ProcessUserBase } from '../pages/sherpas-process/interfaces/process-user-base'
 import { fetchApi } from '../utils/fetch-util'
 export const useProcessUserApi = () => {
   const getProcessUsers = async (
     processId?: number,
     userId?: string,
+    includeProcess = false,
     includeUsers = false
   ) => {
-    const url = `${process.env.VITE_API_URL!}/api/processuser/get?processId=${processId ?? ''}&userId=${userId ?? ''}&includeUsers=${includeUsers}`
+    const url = `${process.env.VITE_API_URL!}/api/processuser/get?${processId ? `processId=${processId}&` : ''}${userId ? `userId=${userId}&` : ''}&includeProcess=${includeProcess}&includeUsers=${includeUsers}`
     const response: ProcessUser[] = await fetchApi(url, 'GET', null)
 
     return response
@@ -16,19 +18,19 @@ export const useProcessUserApi = () => {
 
   const createProcessUser = async (processUser: CreateProcessUser) => {
     const url = `${process.env.VITE_API_URL!}/api/processuser/create`
-    const response: ProcessUser = await fetchApi(url, 'POST', processUser)
+    const response: ProcessUserBase = await fetchApi(url, 'POST', processUser)
     return response
   }
 
   const updateProcessUser = async (processUser: EditProcessUser) => {
     const url = `${process.env.VITE_API_URL!}/api/processuser/update`
-    const response: ProcessUser = await fetchApi(url, 'PATCH', processUser)
+    const response: ProcessUserBase = await fetchApi(url, 'PATCH', processUser)
     return response
   }
 
   const deleteProcessUser = async (processId: number, userId: string) => {
     const url = `${process.env.VITE_API_URL!}/api/processuser/delete/${processId}/${userId}`
-    const response: ProcessUser = await fetchApi(url, 'DELETE', null)
+    const response: ProcessUserBase = await fetchApi(url, 'DELETE', null)
     return response
   }
 

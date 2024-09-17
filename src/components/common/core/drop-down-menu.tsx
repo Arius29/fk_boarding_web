@@ -3,7 +3,7 @@ import { useState } from 'react'
 
 interface DropDownProps {
   id: string
-  title: string
+  value: string
   label?: string
   description?: string
   error?: string
@@ -13,21 +13,29 @@ interface DropDownProps {
   }: {
     showModal: boolean
     handleToggleModal: () => void
+    handleSelectValue: (value: string) => void
   }) => JSX.Element
 }
 
 export const DropDownMenu = ({
   id,
   label,
-  title,
+  value,
   description,
   error,
   children,
 }: DropDownProps) => {
   const [showModal, setShowModal] = useState(false)
+  const [selectedValue, setSelectedValue] = useState<string>(value)
   const handleToggleModal = () => {
     setShowModal((prev) => !prev)
   }
+
+  const handleSelectValue = (value: string) => {
+    setSelectedValue(value)
+    handleToggleModal()
+  }
+
   return (
     <div className="relative space-y-2">
       <label
@@ -42,7 +50,7 @@ export const DropDownMenu = ({
         className="flex flex-row items-center w-full border gap-3 relative outline-none ring-0 p-2 rounded hover:text-blue-550 active:text-blue-550 focus:text-blue-550 hover:border-blue-550 active:border-blue-550 focus:border-blue-550"
       >
         <IconCircleFilled className="w-4 h-4" />
-        <span>{title}</span>
+        <span>{selectedValue}</span>
         <IconChevronDown
           stroke={2}
           className={`absolute right-2 transform transition-transform duration-200 ${
@@ -54,7 +62,7 @@ export const DropDownMenu = ({
         <p className="text-gray-400 text-sm w-full">{description}</p>
       )}
       {error && <p className="text-red-500 text-sm w-full">{error}</p>}
-      {children({ showModal, handleToggleModal })}
+      {children({ showModal, handleToggleModal, handleSelectValue })}
     </div>
   )
 }

@@ -1,5 +1,6 @@
 import { ReactNode } from 'react'
 import {
+  CATEGORIES_PAGE_URL,
   NOTIFICATIONS_PAGE_URL,
   PROCESS_PAGE_URL,
   SHERPAS_PAGE_URL,
@@ -9,6 +10,7 @@ import {
 } from '../../../../routes/routes-config'
 import {
   IconBell,
+  IconCategory,
   IconColumns3,
   IconLayoutKanban,
   IconSpaces,
@@ -33,6 +35,11 @@ export const asideRoutes: AsideRoute[] = [
     path: PROCESS_PAGE_URL,
     label: 'Process',
     icon: <IconLayoutKanban stroke={2} width={24} height={24} />,
+  },
+  {
+    path: CATEGORIES_PAGE_URL,
+    label: 'Categories',
+    icon: <IconCategory stroke={2} width={24} height={24} />,
   },
   {
     path: TAGS_PAGE_URL,

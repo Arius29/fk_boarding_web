@@ -1,17 +1,10 @@
-import { Process } from '../../process/interfaces/process'
+import { ProcessBase } from '../../process/interfaces/process-base'
 import { User } from '../../sherpas/interfaces/user'
-import { ProcessUserStatus } from './process-user-status'
+import { ProcessUserBase } from './process-user-base'
 
-export interface ProcessUser {
-  processId: number
-  userId: string
-  status: ProcessUserStatus
-  startedOn?: Date
-  finishedOn?: Date
-  startedBy?: string
-  finishedBy?: string
-  process?: Process
-  user?: User
-  starter?: User
-  finisher?: User
+export interface ProcessUser extends ProcessUserBase {
+  process?: ProcessBase
+  user?: User | null
+  starter?: User | null
+  finisher?: User | null
 }

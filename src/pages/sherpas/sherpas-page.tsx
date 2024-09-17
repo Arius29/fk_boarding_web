@@ -24,10 +24,11 @@ import {
 } from '../../routes/routes-config'
 import { PrimaryLink } from '../../components/common/links/primary-link'
 import { useUsersApiQuery } from '../../hooks/use-users-api-query'
+import { getAvatarRandom } from '../../utils/avatar-util'
 
 const filterUsers = (users: User[], searchValue: string) => {
-  return users.filter((process) => {
-    return process.name.toLowerCase().includes(searchValue.toLowerCase())
+  return users.filter((user) => {
+    return user.name.toLowerCase().includes(searchValue.toLowerCase())
   })
 }
 
@@ -49,7 +50,7 @@ export const SherpasPage = () => {
 
   const src = selectedUser?.avatar
     ? selectedUser.avatar
-    : `https://ui-avatars.com/api/?name=${selectedUser?.name.replace(' ', '+') ?? ''}&background=random`
+    : getAvatarRandom(selectedUser?.name ?? 'Sherpa User')
 
   const { current, totalPages, handleChangePage, paginatedItems } =
     useTablePagination({

@@ -92,11 +92,13 @@ export const TableSherpasProcess = ({
               </span>
             </TableBodyCell>
             <TableBodyCell>
-              {process.startedOn?.toLocaleDateString()}
+              {process.startedOn &&
+                new Date(process.startedOn).toLocaleDateString()}
             </TableBodyCell>
             <TableBodyCell>{process.starter?.name}</TableBodyCell>
             <TableBodyCell>
-              {process.finishedOn?.toLocaleDateString()}
+              {process.finishedOn &&
+                new Date(process.finishedOn).toLocaleDateString()}
             </TableBodyCell>
             <TableBodyCell>{process.finisher?.name}</TableBodyCell>
             <TableBodyCell>

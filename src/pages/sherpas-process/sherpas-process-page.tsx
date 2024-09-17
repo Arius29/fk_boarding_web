@@ -1,16 +1,15 @@
-import { useEffect, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import { PrimaryButton } from '../../components/common/buttons/primary-button'
 import { Title } from '../../components/common/core/title'
 import { SearchBar } from '../../components/common/search/search-bar'
 import { useTablePagination } from '../../hooks/use-table-pagination'
 import { ProcessUser } from './interfaces/process-user'
-//import { useMsal } from '@azure/msal-react'
 import { TablePagination } from '../../components/common/table/table-pagination'
 import { TableSherpasProcess } from './components/table-sherpas-process'
 import { sortArray, sortArrayDoubleKey } from '../../utils/array-utils'
 import { EditProcessSherpaModal } from './components/edit-process-sherpa-modal'
-import { useQuery } from 'react-query'
-import { useProcessUserApi } from '../../hooks/use-process-user-api'
+import { useProcessUserApiQuery } from '../../hooks/use-process-user-api-query'
+import { useProcessApiQuery } from '../../hooks/use-process-api-query'
 
 type SortOrder = 'asc' | 'desc'
 
@@ -51,8 +50,8 @@ const sortProcesses = (
 const initialStateProcess: ProcessUser = {
   processId: 0,
   userId: '',
-  startedOn: new Date(),
-  finishedOn: new Date(),
+  startedOn: '',
+  finishedOn: '',
   startedBy: '',
   finishedBy: '',
   status: 0,
@@ -63,23 +62,21 @@ let selectedProcess: ProcessUser
 export const SherpasProcessPage = () => {
   const [showModal, setShowModal] = useState(false)
   const [searchValue, setSearchValue] = useState<string>('')
-  const [processes, setProcesses] = useState<ProcessUser[]>([])
-  const { getProcessUsers } = useProcessUserApi()
-  const { data } = useQuery(
-    ['getProcessUsers'],
-    () => getProcessUsers(undefined, undefined, true),
-    { staleTime: 300000, cacheTime: 600000 }
-  )
-
+  const { processes } = useProcessApiQuery()
+  const {
+    processesUsers,
+    setProcessesUsers,
+    mutationAddProcessUser,
+    mutationEditProcessUser,
+    mutationDeleteProcessUser,
+  } = useProcessUserApiQuery(processes, undefined, undefined, true, true)
   const searchBarRef = useRef<HTMLInputElement>(null)
   const sortConfig = useRef<SortOrder>('asc')
   const isEditing = useRef<boolean>(false)
-  // const { accounts } = useMsal()
-  // const account = accounts[0]
 
   const handleSortColumn = (key: keyof ProcessUser) => {
     sortConfig.current = sortConfig.current == 'asc' ? 'desc' : 'asc'
-    setProcesses(sortProcesses(key, processes, sortConfig.current))
+    setProcessesUsers(sortProcesses(key, processesUsers, sortConfig.current))
   }
 
   const handleToggle = () => setShowModal(!showModal)
@@ -88,7 +85,7 @@ export const SherpasProcessPage = () => {
   }
 
   const handleSelectProcess = (processId: number, userId: string) => {
-    const process = processes?.find(
+    const process = processesUsers?.find(
       (process) => process.processId === processId && process.userId === userId
     )
     if (!process) return
@@ -97,34 +94,26 @@ export const SherpasProcessPage = () => {
     handleToggle()
   }
 
-  const handleAddProcess = (process: ProcessUser) => {
-    const createProcessUser = {}
-    console.log(process)
-    console.log(createProcessUser)
-  }
-
-  const handleEditProcess = (process: ProcessUser) => {
-    const editProcess = {}
-    console.log(process)
-    console.log(editProcess)
+  const handleFormProcessUser = (process: ProcessUser) => {
+    if (isEditing.current) mutationEditProcessUser.mutate(process)
+    mutationAddProcessUser.mutate(process)
+    handleToggle()
   }
 
   const handleDeleteProcess = (processId: number, userId: string) => {
-    console.log(processId, userId)
+    const process = processesUsers?.find(
+      (process) => process.processId === processId && process.userId === userId
+    )
+    if (!process) return
+    mutationDeleteProcessUser.mutate(process)
   }
 
   const { current, totalPages, handleChangePage, paginatedItems } =
     useTablePagination({
-      items: filterSherpasProcess(processes, searchValue),
+      items: filterSherpasProcess(processesUsers, searchValue),
       itemsPerPage: 10,
       currentPage: 1,
     })
-
-  useEffect(() => {
-    if (data) {
-      setProcesses(data)
-    }
-  }, [data])
 
   return (
     <>
@@ -172,10 +161,11 @@ export const SherpasProcessPage = () => {
         <EditProcessSherpaModal
           isEditing={isEditing.current}
           handleToggle={handleToggle}
-          process={isEditing.current ? selectedProcess : initialStateProcess}
-          handleProcessForm={
-            isEditing.current ? handleEditProcess : handleAddProcess
+          processes={processes}
+          processUser={
+            isEditing.current ? selectedProcess : initialStateProcess
           }
+          handleProcessForm={handleFormProcessUser}
         />
       )}
     </>

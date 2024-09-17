@@ -1,9 +1,12 @@
+import { UserBase } from '../../sherpas/interfaces/user-base'
+import { ProcessUserStatus } from './process-user-status'
+
 export interface EditProcessUser {
   processId: number
-  userId: string
-  status: number
-  startedOn?: Date
-  finishedOn?: Date
-  startedBy?: string
-  finishedBy?: string
+  status: ProcessUserStatus
+  startedOn?: string | null
+  finishedOn?: string | null
+  user: UserBase
+  starter?: UserBase | null
+  finisher?: UserBase | null
 }

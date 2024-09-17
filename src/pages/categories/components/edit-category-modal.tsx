@@ -1,72 +1,82 @@
 import { useForm } from 'react-hook-form'
+import { InputFormLabel } from '../../../components/common/form/input-form-label'
 import { Modal } from '../../../components/common/modal/modal'
-import { ProcessUser } from '../interfaces/process-user'
-import { UserDropdownInput } from '../../../components/common/core/user-dropdown-input'
+import { WorkItemCategory } from '../interfaces/work-item-category'
 import { Process } from '../../process/interfaces/process'
 import { ProcessDropdownInput } from '../../../components/common/core/process-dropdown-input'
-import { ProcessUserForm } from '../interfaces/process-user-form'
-interface EditProcessSherpaModalProps {
-  processes: Process[]
+
+interface EditCategoryModalProps {
   isEditing: boolean
-  processUser: ProcessUser
+  category: WorkItemCategory
+  processes: Process[]
   handleToggle: () => void
-  handleProcessForm: (data: ProcessUser) => void
+  handleProcessForm: (category: WorkItemCategory) => void
 }
 
-export const EditProcessSherpaModal = ({
+const validations = {
+  name: {
+    required: { value: true, message: 'The name is required.' },
+    maxLength: {
+      value: 250,
+      message: 'The name cannot exceed 250 characters.',
+    },
+  },
+  processId: {
+    required: { value: true, message: 'The process is required.' },
+    min: {
+      value: 1,
+      message: 'The process is required.',
+    },
+  },
+}
+
+export const EditCategoryModal = ({
   isEditing,
-  processUser,
-  processes = [],
+  category,
+  processes,
   handleToggle,
   handleProcessForm,
-}: EditProcessSherpaModalProps) => {
+}: EditCategoryModalProps) => {
   const {
-    control,
     register,
+    control,
     formState: { errors },
     handleSubmit,
-  } = useForm<ProcessUserForm>({
-    defaultValues: processUser,
+  } = useForm<WorkItemCategory>({
+    defaultValues: category,
   })
 
   return (
     <Modal onClickOverlay={handleToggle}>
       <section className="w-96">
         <h3 className="text-2xl mb-1">
-          {isEditing ? 'Edit employee process' : 'New employee process'}
+          {isEditing ? 'Edit category' : 'New category'}
         </h3>
         <h4 className="text-xs mb-4 text-gray-400">
-          {isEditing
-            ? 'Change employee process information'
-            : 'Create new employee process'}
+          {isEditing ? 'Change category information' : 'Create new category'}
         </h4>
         <form
           onSubmit={handleSubmit((data) => handleProcessForm(data))}
           className="flex flex-col gap-3"
         >
-          <UserDropdownInput control={control} error={errors.userId?.message} />
+          {isEditing && <input type="hidden" {...register('id')} />}
+
+          <InputFormLabel
+            id="name"
+            label="Name"
+            autoComplete="off"
+            InputContainerClassType={errors.name ? 'error' : 'success'}
+            error={errors.name?.message}
+            {...register('name', validations.name)}
+          />
+
           <ProcessDropdownInput
             inputName="processId"
             processes={processes}
-            error={errors.processId?.message}
-            value={processUser.process?.name}
             control={control}
+            error={errors.processId?.message}
+            value={category.process?.name}
           />
-
-          {!isEditing && (
-            <label
-              htmlFor="auto-add-work-items-user"
-              className="text-sm font-medium text-gray-900 flex flex-row items-center"
-            >
-              <input
-                type="checkbox"
-                id="auto-add-work-items-user"
-                {...register('autoAddWorkItemsUser')}
-                className="mr-2 w-4 h-4 text-blue-600 border-gray-300 rounded ring-0"
-              />
-              Auto add work items
-            </label>
-          )}
 
           <div className="grid grid-cols-2 gap-5">
             <button
