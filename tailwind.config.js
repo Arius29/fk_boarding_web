@@ -9,6 +9,10 @@ export default {
       colors: {
         'blue-550': '#0487FA',
         'blue-650': '#0A4280',
+        'not-started': '#C3BE42',
+        'in-progress': '#0487FA',
+        completed: '#22B770',
+        abandoned: '#7A7E8D',
       },
       keyframes: {
         fadeIn: {

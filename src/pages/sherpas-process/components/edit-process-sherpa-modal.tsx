@@ -5,6 +5,8 @@ import { UserDropdownInput } from '../../../components/common/core/user-dropdown
 import { Process } from '../../process/interfaces/process'
 import { ProcessDropdownInput } from '../../../components/common/core/process-dropdown-input'
 import { ProcessUserForm } from '../interfaces/process-user-form'
+import { StatusDropdownInput } from '../../../components/common/core/status-dropdown-input'
+
 interface EditProcessSherpaModalProps {
   processes: Process[]
   isEditing: boolean
@@ -44,7 +46,11 @@ export const EditProcessSherpaModal = ({
           onSubmit={handleSubmit((data) => handleProcessForm(data))}
           className="flex flex-col gap-3"
         >
-          <UserDropdownInput control={control} error={errors.userId?.message} />
+          <UserDropdownInput
+            control={control}
+            error={errors.userId?.message}
+            value={processUser.user?.name}
+          />
           <ProcessDropdownInput
             inputName="processId"
             processes={processes}
@@ -66,6 +72,15 @@ export const EditProcessSherpaModal = ({
               />
               Auto add work items
             </label>
+          )}
+
+          {isEditing && (
+            <StatusDropdownInput
+              control={control}
+              inputName="status"
+              error={errors.status?.message}
+              value={processUser.status}
+            />
           )}
 
           <div className="grid grid-cols-2 gap-5">

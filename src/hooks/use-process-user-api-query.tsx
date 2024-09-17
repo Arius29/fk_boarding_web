@@ -43,13 +43,13 @@ const createStarterFinisherByUser = (
     startedOn:
       processUser.status === 1 && !processUser.startedOn
         ? new Date().toISOString()
-        : null,
+        : processUser.startedOn || null,
     startedBy: starter?.id || null,
     finishedBy: finisher?.id || null,
     finishedOn:
       processUser.status === 2 && !processUser.finishedOn
         ? new Date().toISOString()
-        : null,
+        : processUser.finishedOn || null,
     starter: starter,
     finisher: finisher,
   }
@@ -121,7 +121,7 @@ export const useProcessUserApiQuery = (
         ...createStarterFinisherByUser(account, processUser),
       })
     },
-    onSuccess: (data: ProcessUserBase) => {
+    onSuccess: (data: ProcessUserBase, context: ProcessUser) => {
       setProcessesUsers(
         processesUsers.map((process) => {
           if (
@@ -129,9 +129,9 @@ export const useProcessUserApiQuery = (
             process.userId === data.userId
           ) {
             return {
-              ...process,
+              ...context,
               ...data,
-              ...createStarterFinisherByUser(account, data),
+              ...createStarterFinisherByUser(account, context),
               process: proccesses.find(
                 (process) => process.id === data.processId
               ),

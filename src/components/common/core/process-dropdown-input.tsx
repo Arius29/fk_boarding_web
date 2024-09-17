@@ -41,7 +41,7 @@ export const ProcessDropdownInput = <T extends FieldValues>({
           {({ showModal, handleSelectValue }) =>
             showModal ? (
               <>
-                <ul className="absolute z-10 bg-white w-full top-full">
+                <ul className="absolute z-10 bg-white w-full top-full rounded">
                   {processes.map((process) => (
                     <DropDownMenuItem
                       onClick={() => {
@@ -49,6 +49,7 @@ export const ProcessDropdownInput = <T extends FieldValues>({
                         handleSelectValue(process.name)
                       }}
                       key={process.id}
+                      type={field.value === process.id ? 'active' : 'base'}
                     >
                       {process.name}
                     </DropDownMenuItem>

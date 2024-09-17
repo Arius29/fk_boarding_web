@@ -40,17 +40,19 @@ const validations = {
 }
 
 interface UserDropdownProps {
+  value?: string
   containerStyles?: React.CSSProperties
   control: Control<ProcessUser>
   error?: string
 }
 
 export const UserDropdownInput = ({
+  value = '',
   containerStyles,
   control,
   error,
 }: UserDropdownProps) => {
-  const [searchValue, setSearchValue] = useState('')
+  const [searchValue, setSearchValue] = useState(value)
   const [showModal, setShowModal] = useState(false)
   // const { getEmployeeList } = useEmployeeApi()
 
