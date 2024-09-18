@@ -4,7 +4,10 @@ import { useUserFileManagerApi } from './use-user-file-manager-api'
 import { useMutation, useQuery } from 'react-query'
 import { toast } from 'sonner'
 import { CreateUserFile } from '../pages/sherpas/interfaces/create-user-file'
-export const useUserFileManagerApiQuery = (userId: string) => {
+export const useUserFileManagerApiQuery = (
+  userId: string,
+  enabled: boolean = true
+) => {
   const [userFiles, setUserFiles] = useState<UserFile[]>([])
 
   const { getUserFiles, uploadUserFile, deleteUserFile } =
@@ -14,6 +17,7 @@ export const useUserFileManagerApiQuery = (userId: string) => {
     queryFn: () => getUserFiles(userId),
     staleTime: 300000,
     cacheTime: 600000,
+    enabled: enabled,
     onError: () => {
       toast.error('An error occurred while trying to get user files')
     },

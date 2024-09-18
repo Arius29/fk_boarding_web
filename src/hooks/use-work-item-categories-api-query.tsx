@@ -11,7 +11,8 @@ export const useWorkItemCategoriesApiQuery = (
   categoryId?: number,
   processId?: number,
   includeProcesses: boolean = false,
-  includeWorkItems: boolean = false
+  includeWorkItems: boolean = false,
+  enabled: boolean = true
 ) => {
   const [categories, setCategories] = useState<WorkItemCategory[]>([])
   const { getCategories, createCategory, updateCategory, deleteCategory } =
@@ -22,6 +23,7 @@ export const useWorkItemCategoriesApiQuery = (
       getCategories(categoryId, processId, includeProcesses, includeWorkItems),
     staleTime: 300000,
     cacheTime: 600000,
+    enabled: enabled,
     onError: () => {
       toast.error('An error occurred while trying to get categories')
     },

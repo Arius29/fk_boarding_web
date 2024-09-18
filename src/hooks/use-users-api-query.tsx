@@ -10,7 +10,8 @@ export const useUsersApiQuery = (
   includeReporters: boolean = false,
   includeRecipients = false,
   includeProcessUsers = false,
-  includeWorkItems = false
+  includeWorkItems = false,
+  enabled: boolean = true
 ) => {
   const [users, setUsers] = useState<User[]>([])
   const { getUsers, createUser, updateUser, deleteUser } = useUsersApi()
@@ -26,6 +27,7 @@ export const useUsersApiQuery = (
       ),
     staleTime: 300000,
     cacheTime: 600000,
+    enabled: enabled,
     onError: () => {
       toast.error('An error occurred while trying to get users')
     },

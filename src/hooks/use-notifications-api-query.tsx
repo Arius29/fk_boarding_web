@@ -23,7 +23,8 @@ export const useNotificationsApiQuery = (
   pageNumber: number,
   pageSize: number,
   userId?: string,
-  omitSend: boolean = false
+  omitSend: boolean = false,
+  enabled: boolean = true
 ) => {
   const [notificationsResult, setNotificationsResult] =
     useState<PagedResultNotification>(initialState)
@@ -43,6 +44,7 @@ export const useNotificationsApiQuery = (
       ),
     staleTime: 300000,
     cacheTime: 600000,
+    enabled: enabled,
     onSuccess: (data) => {
       setNotificationsResult({
         ...data,

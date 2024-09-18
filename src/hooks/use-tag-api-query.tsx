@@ -4,7 +4,7 @@ import { useMutation, useQuery } from 'react-query'
 import { useTagsApi } from './use-tags-api'
 import { toast } from 'sonner'
 
-export const useTagsApiQuery = () => {
+export const useTagsApiQuery = (enabled: boolean = true) => {
   const [tags, setTags] = useState<Tag[]>([])
 
   const { getTags, createTag, updateTag, deleteTag } = useTagsApi()
@@ -16,6 +16,7 @@ export const useTagsApiQuery = () => {
     onError: () => {
       toast.error('An error occurred while trying to get tags')
     },
+    enabled: enabled,
   })
 
   const mutationAddTag = useMutation({

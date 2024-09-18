@@ -5,9 +5,22 @@ interface AvatarProps extends React.HTMLAttributes<HTMLImageElement> {
   size?: Sizes
 }
 
-type Sizes = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl'
+type Sizes =
+  | 'xs'
+  | '2xs'
+  | 'sm-xs'
+  | 'sm'
+  | 'md'
+  | 'lg'
+  | 'xl'
+  | '2xl'
+  | '3xl'
+  | '4xl'
+  | '5xl'
 const CLASS_NAMES_SIZES = {
   xs: 'w-6 h-6 rounded-full object-center',
+  '2xs': 'w-7 h-7 rounded-full object-center',
+  'sm-xs': 'w-8 h-8 rounded-full object-center',
   sm: 'w-9 h-9 rounded-full object-center',
   md: 'w-14 h-14 rounded-full object-center',
   lg: 'w-20 h-20 rounded-full object-center',

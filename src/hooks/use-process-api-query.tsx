@@ -27,7 +27,8 @@ export const useProcessApiQuery = (
   includeUsers: boolean = false,
   includeTags: boolean = false,
   includeProcessUsers: boolean = false,
-  omitWorkItemsAbandoned: boolean = false
+  omitWorkItemsAbandoned: boolean = false,
+  enabled: boolean = true
 ) => {
   const [processes, setProcesses] = useState<Process[]>([])
   const { accounts } = useMsal()
@@ -49,6 +50,7 @@ export const useProcessApiQuery = (
       ),
     staleTime: 300000,
     cacheTime: 600000,
+    enabled: enabled,
     onError: () => {
       toast.error('An error occurred while trying to get processes')
     },
