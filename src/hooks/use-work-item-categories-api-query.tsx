@@ -6,21 +6,35 @@ import { useWorkItemCategoriesApi } from './use-work-item-categories-api'
 import { WorkItemCategoryBase } from '../pages/categories/interfaces/work-item-category-base'
 import { Process } from '../pages/process/interfaces/process'
 
-export const useWorkItemCategoriesApiQuery = (
-  processes: Process[] = [],
-  categoryId?: number,
-  processId?: number,
-  includeProcesses: boolean = false,
-  includeWorkItems: boolean = false,
-  enabled: boolean = true
-) => {
+interface useWorkItemCategoriesApiQueryProps {
+  processes: Process[]
+  categoryId?: number
+  processId?: number
+  includeProcesses?: boolean
+  includeWorkItems?: boolean
+  enabled?: boolean
+}
+
+export const useWorkItemCategoriesApiQuery = ({
+  processes = [],
+  categoryId = undefined,
+  processId = undefined,
+  includeProcesses = false,
+  includeWorkItems = false,
+  enabled = true,
+}: useWorkItemCategoriesApiQueryProps) => {
   const [categories, setCategories] = useState<WorkItemCategory[]>([])
   const { getCategories, createCategory, updateCategory, deleteCategory } =
     useWorkItemCategoriesApi()
   const { data, isLoading, error } = useQuery({
     queryKey: ['categories', categoryId, processId],
     queryFn: () =>
-      getCategories(categoryId, processId, includeProcesses, includeWorkItems),
+      getCategories({
+        categoryId,
+        processId,
+        includeProcesses,
+        includeWorkItems,
+      }),
     staleTime: 300000,
     cacheTime: 600000,
     enabled: enabled,

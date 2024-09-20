@@ -53,20 +53,35 @@ const createStarterFinisherByUser = (
   }
 }
 
-export const useWorkItemApiQuery = (
-  omitAbandoned: boolean = false,
-  includeProcess: boolean = false,
-  includeCategory: boolean = false,
-  includeReporters: boolean = false,
-  includeRecipients: boolean = false,
-  includeTags: boolean = false,
-  includeUsers: boolean = false,
-  userId?: string,
-  workItemId?: number,
-  categoryId?: number,
-  processId?: number,
-  enabled: boolean = true
-) => {
+interface useWorkItemApiQuery {
+  omitAbandoned?: boolean
+  includeProcess?: boolean
+  includeCategory?: boolean
+  includeReporters?: boolean
+  includeRecipients?: boolean
+  includeTags?: boolean
+  includeUsers?: boolean
+  userId?: string
+  workItemId?: number
+  categoryId?: number
+  processId?: number
+  enabled?: boolean
+}
+
+export const useWorkItemApiQuery = ({
+  omitAbandoned = false,
+  includeProcess = false,
+  includeCategory = false,
+  includeReporters = false,
+  includeRecipients = false,
+  includeTags = false,
+  includeUsers = false,
+  userId = undefined,
+  workItemId = undefined,
+  categoryId = undefined,
+  processId = undefined,
+  enabled = true,
+}: useWorkItemApiQuery) => {
   const [workItems, setWorkItems] = useState<WorkItem[]>([])
   const { accounts } = useMsal()
   const account = accounts[0]

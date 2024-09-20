@@ -62,14 +62,18 @@ let selectedProcess: ProcessUser
 export const SherpasProcessPage = () => {
   const [showModal, setShowModal] = useState(false)
   const [searchValue, setSearchValue] = useState<string>('')
-  const { processes } = useProcessApiQuery()
+  const { processes } = useProcessApiQuery({})
   const {
     processesUsers,
     setProcessesUsers,
     mutationAddProcessUser,
     mutationEditProcessUser,
     mutationDeleteProcessUser,
-  } = useProcessUserApiQuery(processes, undefined, undefined, true, true)
+  } = useProcessUserApiQuery({
+    proccesses: processes,
+    includeProcess: true,
+    includeUsers: true,
+  })
   const searchBarRef = useRef<HTMLInputElement>(null)
   const sortConfig = useRef<SortOrder>('asc')
   const isEditing = useRef<boolean>(false)

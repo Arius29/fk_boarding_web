@@ -4,13 +4,20 @@ import { WorkItemCategory } from '../pages/categories/interfaces/work-item-categ
 import { WorkItemCategoryBase } from '../pages/categories/interfaces/work-item-category-base'
 import { fetchApi } from '../utils/fetch-util'
 
+interface GetCategoriesProps {
+  categoryId?: number
+  processId?: number
+  includeProcesses?: boolean
+  includeWorkItems?: boolean
+}
+
 export const useWorkItemCategoriesApi = () => {
-  const getCategories = async (
-    categoryId?: number,
-    processId?: number,
-    includeProcesses: boolean = false,
-    includeWorkItems: boolean = false
-  ) => {
+  const getCategories = async ({
+    categoryId = undefined,
+    processId = undefined,
+    includeProcesses = false,
+    includeWorkItems = false,
+  }: GetCategoriesProps) => {
     const url = `${process.env.VITE_API_URL!}/api/category/get?${categoryId ? `categoryId=${categoryId}&` : ''}${processId ? `processId=${processId}&` : ''}processId=&includeProcesses=${includeProcesses}&includeWorkItems=${includeWorkItems}`
 
     const response: WorkItemCategory[] = await fetchApi(url, 'GET', null)

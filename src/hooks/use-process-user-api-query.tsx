@@ -11,6 +11,15 @@ import { ProcessUserBase } from '../pages/sherpas-process/interfaces/process-use
 import { Process } from '../pages/process/interfaces/process'
 import { ProcessUserForm } from '../pages/sherpas-process/interfaces/process-user-form'
 
+interface useProcessUserApiQueryProps {
+  proccesses: Process[]
+  processId?: number
+  userId?: string
+  includeProcess?: boolean
+  includeUsers?: boolean
+  enabled?: boolean
+}
+
 const createBaseUser = (account: AccountInfo): User => {
   return {
     id: account?.homeAccountId,
@@ -55,14 +64,14 @@ const createStarterFinisherByUser = (
   }
 }
 
-export const useProcessUserApiQuery = (
-  proccesses: Process[] = [],
-  processId?: number,
-  userId?: string,
+export const useProcessUserApiQuery = ({
+  proccesses = [],
+  processId = undefined,
+  userId = undefined,
   includeProcess = false,
   includeUsers = false,
-  enabled: boolean = true
-) => {
+  enabled = true,
+}: useProcessUserApiQueryProps) => {
   const [processesUsers, setProcessesUsers] = useState<ProcessUser[]>([])
   const { accounts } = useMsal()
   const account = accounts[0]
@@ -76,7 +85,7 @@ export const useProcessUserApiQuery = (
   const { data, isLoading, error } = useQuery({
     queryKey: ['processesUsers', processId],
     queryFn: () =>
-      getProcessUsers(processId, userId, includeProcess, includeUsers),
+      getProcessUsers({ processId, userId, includeProcess, includeUsers }),
     staleTime: 300000,
     cacheTime: 600000,
     enabled: enabled,
@@ -153,10 +162,10 @@ export const useProcessUserApiQuery = (
 
   const mutationDeleteProcessUser = useMutation({
     mutationFn: (processUser: ProcessUser) => {
-      return deleteProcessUser(
-        processUser.processId,
-        processUser.user?.id || processUser.userId
-      )
+      return deleteProcessUser({
+        processId: processUser.processId,
+        userId: processUser.user?.id || processUser.userId,
+      })
     },
     onSuccess: (data: ProcessUserBase) => {
       setProcessesUsers(

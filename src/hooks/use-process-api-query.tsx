@@ -9,6 +9,17 @@ import { getAvatarRandom } from '../utils/avatar-util'
 import { AccountInfo } from '@azure/msal-browser'
 import { ProcessBase } from '../pages/process/interfaces/process-base'
 
+interface useProcessApiQueryProps {
+  processId?: number
+  includeCategories?: boolean
+  includeWorkItems?: boolean
+  includeUsers?: boolean
+  includeTags?: boolean
+  includeProcessUsers?: boolean
+  omitWorkItemsAbandoned?: boolean
+  enabled?: boolean
+}
+
 const createBaseUser = (account: AccountInfo): User => {
   return {
     id: account?.homeAccountId,
@@ -20,16 +31,16 @@ const createBaseUser = (account: AccountInfo): User => {
   }
 }
 
-export const useProcessApiQuery = (
-  processId?: number,
-  includeCategories: boolean = false,
-  includeWorkItems: boolean = false,
-  includeUsers: boolean = false,
-  includeTags: boolean = false,
-  includeProcessUsers: boolean = false,
-  omitWorkItemsAbandoned: boolean = false,
-  enabled: boolean = true
-) => {
+export const useProcessApiQuery = ({
+  processId = undefined,
+  includeCategories = false,
+  includeWorkItems = false,
+  includeUsers = false,
+  includeTags = false,
+  includeProcessUsers = false,
+  omitWorkItemsAbandoned = false,
+  enabled = true,
+}: useProcessApiQueryProps) => {
   const [processes, setProcesses] = useState<Process[]>([])
   const { accounts } = useMsal()
   const account = accounts[0]
@@ -39,15 +50,15 @@ export const useProcessApiQuery = (
   const { data, isLoading, error } = useQuery({
     queryKey: ['processes', processId],
     queryFn: () =>
-      getProceses(
+      getProceses({
         processId,
         includeCategories,
         includeWorkItems,
         includeUsers,
         includeTags,
         includeProcessUsers,
-        omitWorkItemsAbandoned
-      ),
+        omitWorkItemsAbandoned,
+      }),
     staleTime: 300000,
     cacheTime: 600000,
     enabled: enabled,

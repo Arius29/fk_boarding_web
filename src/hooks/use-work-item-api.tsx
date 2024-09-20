@@ -18,8 +18,7 @@ export const useWorkItemApi = () => {
     categoryId?: number,
     processId?: number
   ) => {
-    const url = `${process.env.VITE_API_URL!}/api/workitem/get?userId=${userId}&workItemId=${workItemId}&categoryId=${categoryId}&processId=${processId}&omitAbandoned=${omitAbandoned}&includeProcess=${includeProcess}&includeCategory=${includeCategory}&includeReporters=${includeReporters}&includeRecipients=${includeRecipients}&includeTags=${includeTags}&includeUsers=${includeUsers}`
-
+    const url = `${process.env.VITE_API_URL!}/api/workitem/get?userId=${userId ? userId : ''}&workItemId=${workItemId ? workItemId : ''}&categoryId=${categoryId ? categoryId : ''}&processId=${processId ? processId : ''}&omitAbandoned=${omitAbandoned}&includeProcess=${includeProcess}&includeCategory=${includeCategory}&includeReporters=${includeReporters}&includeRecipients=${includeRecipients}&includeTags=${includeTags}&includeUsers=${includeUsers}`
     const response: WorkItem[] = await fetchApi(url, 'GET', null)
 
     return response

@@ -5,11 +5,6 @@ import { useNotificationsApi } from './use-notifications-api'
 import { useMutation, useQuery } from 'react-query'
 import { toast } from 'sonner'
 import { PagedResultNotification } from '../pages/notifications/interfaces/paged-result-notification'
-const sortNotifications = (notifications: NotificationUser[]) => {
-  return notifications.sort(function (a, b) {
-    return a.notification.sendOn ? -1 : b.notification.sendOn ? 1 : 0
-  })
-}
 
 const initialState: PagedResultNotification = {
   pageNumber: 1,
@@ -19,15 +14,33 @@ const initialState: PagedResultNotification = {
   items: [],
 }
 
-export const useNotificationsApiQuery = (
-  pageNumber: number,
-  pageSize: number,
-  userId?: string,
-  omitSend: boolean = false,
-  enabled: boolean = true
-) => {
+interface useNotificationsApiQueryProps {
+  omitSend?: boolean
+  enabled?: boolean
+  userId?: string
+  pageNumber: number
+  pageSize: number
+}
+
+const sortNotifications = (notifications: NotificationUser[]) => {
+  return notifications.sort(function (a, b) {
+    return a.notification.sendOn ? -1 : b.notification.sendOn ? 1 : 0
+  })
+}
+
+export const useNotificationsApiQuery = ({
+  pageNumber = 1,
+  pageSize = 10,
+  userId = undefined,
+  omitSend = false,
+  enabled = true,
+}: useNotificationsApiQueryProps) => {
   const [notificationsResult, setNotificationsResult] =
-    useState<PagedResultNotification>(initialState)
+    useState<PagedResultNotification>({
+      ...initialState,
+      pageNumber: pageNumber,
+      pageSize: pageSize,
+    })
   const { accounts } = useMsal()
   const account = accounts[0]
 
@@ -36,12 +49,12 @@ export const useNotificationsApiQuery = (
   const { isLoading, error } = useQuery({
     queryKey: ['notifications', pageNumber],
     queryFn: () =>
-      getNotifications(
-        userId ?? account?.homeAccountId,
+      getNotifications({
+        userId: userId ?? account?.homeAccountId,
         pageNumber,
         pageSize,
-        omitSend
-      ),
+        omitSend,
+      }),
     staleTime: 300000,
     cacheTime: 600000,
     enabled: enabled,
@@ -61,7 +74,10 @@ export const useNotificationsApiQuery = (
 
   const mutationMrkAsRead = useMutation({
     mutationFn: (notificationId: number) => {
-      return markAsRead(notificationId, userId ?? account?.homeAccountId)
+      return markAsRead({
+        notificationId,
+        userId: userId ?? account?.homeAccountId,
+      })
     },
     onSuccess: (data) => {
       setNotificationsResult({

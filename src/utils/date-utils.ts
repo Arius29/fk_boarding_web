@@ -6,6 +6,11 @@ export const isDateBeforeTodayStr = (date: string) => {
   return new Date(date) < new Date()
 }
 
+export const getTimeDate = (date: Date | string | number) => {
+  const datetime = new Date(date)
+  return datetime.toLocaleTimeString().replace(/:\d{2}\s/, ' ')
+}
+
 const getTimeAgo = (interval: number, label: string) => {
   return `${interval} ${label}${interval > 1 ? 's' : ''} ago`
 }

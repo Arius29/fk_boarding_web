@@ -71,9 +71,7 @@ const validations = {
   birthDate: {
     validate: {
       isBeforeToday: (value: string | undefined) =>
-        isDateBeforeTodayStr(value || '')
-          ? undefined
-          : 'Date must be before today',
+        isDateBeforeTodayStr(value || '') ? null : 'Date must be before today',
     },
   },
 }
@@ -118,7 +116,10 @@ export const SherpaFormPage = ({ mode = 'add' }: SherpaFormPageProps) => {
 
   useQuery({
     queryKey: ['user', id],
-    queryFn: () => getUsers(id),
+    queryFn: () =>
+      getUsers({
+        userId: id,
+      }),
     staleTime: 300000,
     cacheTime: 600000,
     onSuccess: (data) => {

@@ -56,20 +56,17 @@ export const WorkItemCategoryPage = () => {
   const sortConfig = useRef<SortOrder>('asc')
   const searchBarRef = useRef<HTMLInputElement>(null)
   const isEditing = useRef<boolean>(false)
-  const { processes } = useProcessApiQuery()
+  const { processes } = useProcessApiQuery({})
   const {
     categories,
     setCategories,
     mutationAddCategory,
     mutationEditCategory,
     mutationDeleteCategory,
-  } = useWorkItemCategoriesApiQuery(
-    processes,
-    undefined,
-    undefined,
-    true,
-    false
-  )
+  } = useWorkItemCategoriesApiQuery({
+    processes: processes,
+    includeProcesses: true,
+  })
   const handleSearch = (query: string) => {
     setSearchValue(query)
   }

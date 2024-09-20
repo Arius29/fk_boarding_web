@@ -2,16 +2,27 @@ import { CreateProcess } from '../pages/process/interfaces/create-process'
 import { EditProcess } from '../pages/process/interfaces/edit-process'
 import { Process } from '../pages/process/interfaces/process'
 import { fetchApi } from '../utils/fetch-util'
+
+interface GetProcessesProps {
+  processId?: number
+  includeCategories?: boolean
+  includeWorkItems?: boolean
+  includeUsers?: boolean
+  includeTags?: boolean
+  includeProcessUsers?: boolean
+  omitWorkItemsAbandoned?: boolean
+}
+
 export const useProcessApi = () => {
-  const getProceses = async (
-    processId?: number,
-    includeCategories: boolean = false,
-    includeWorkItems: boolean = false,
-    includeUsers: boolean = false,
-    includeTags: boolean = false,
-    includeProcessUsers: boolean = false,
-    omitWorkItemsAbandoned: boolean = false
-  ) => {
+  const getProceses = async ({
+    processId = undefined,
+    includeCategories = false,
+    includeWorkItems = false,
+    includeUsers = false,
+    includeTags = false,
+    includeProcessUsers = false,
+    omitWorkItemsAbandoned = false,
+  }: GetProcessesProps) => {
     const url = `${process.env.VITE_API_URL!}/api/process/get?${processId ? `processId=${processId}&` : ''}includeCategories=${includeCategories}&includeWorkItems=${includeWorkItems}&includeUsers=${includeUsers}&includeTags=${includeTags}&includeProcessUsers=${includeProcessUsers}&omitWorkItemsAbandoned=${omitWorkItemsAbandoned}`
 
     const response: Process[] = await fetchApi(url, 'GET', null)

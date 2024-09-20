@@ -36,7 +36,7 @@ export const SherpasPage = () => {
   const [selectedUser, setSelectedUser] = useState<User | null>(null)
   const [searchValue, setSearchValue] = useState<string>('')
   const searchBarRef = useRef<HTMLInputElement>(null)
-  const { users, isLoading } = useUsersApiQuery()
+  const { users, isLoading } = useUsersApiQuery({})
 
   const handleSelectUser = (id: string) => {
     const user = users.find((user) => user.id === id)

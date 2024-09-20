@@ -51,7 +51,7 @@ export const UserDropdownInput = ({
   const [searchValue, setSearchValue] = useState(value)
   const [showModal, setShowModal] = useState(false)
 
-  const { users } = useUsersApiQuery()
+  const { users } = useUsersApiQuery({})
 
   const [debouncedSearchValue] = useDebounce(searchValue, 300)
 

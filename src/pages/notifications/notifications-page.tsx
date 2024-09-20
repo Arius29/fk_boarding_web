@@ -9,10 +9,10 @@ const initialState = {
 }
 export const NotificationsPage = () => {
   const [pagePagination, setPagePagination] = useState(initialState)
-  const { notificationsResult, mutationMrkAsRead } = useNotificationsApiQuery(
-    pagePagination.pageNumber,
-    pagePagination.pageSize
-  )
+  const { notificationsResult, mutationMrkAsRead } = useNotificationsApiQuery({
+    pageNumber: pagePagination.pageNumber,
+    pageSize: pagePagination.pageSize,
+  })
 
   const handleGetMoreNotifications = () => {
     if (notificationsResult.totalPages === pagePagination.pageNumber) {

@@ -3,14 +3,22 @@ import { EditUser } from '../pages/sherpas/interfaces/edit-user'
 import { User } from '../pages/sherpas/interfaces/user'
 import { fetchApi } from '../utils/fetch-util'
 
+interface GetUsersProps {
+  userId?: string
+  includeReporters?: boolean
+  includeRecipients?: boolean
+  includeProcessUsers?: boolean
+  includeWorkItems?: boolean
+}
+
 export const useUsersApi = () => {
-  const getUsers = async (
-    userId?: string,
-    includeReporters: boolean = false,
+  const getUsers = async ({
+    userId = undefined,
+    includeReporters = false,
     includeRecipients = false,
     includeProcessUsers = false,
-    includeWorkItems = false
-  ) => {
+    includeWorkItems = false,
+  }: GetUsersProps) => {
     const url = `${process.env.VITE_API_URL!}/api/user/get?${userId ? `userId=${userId}&` : ''}&includeReporters=${includeReporters}&includeRecipients=${includeRecipients}&includeProcessUsers=${includeProcessUsers}&includeWorkItems=${includeWorkItems}`
 
     const response: User[] = await fetchApi(url, 'GET', null)

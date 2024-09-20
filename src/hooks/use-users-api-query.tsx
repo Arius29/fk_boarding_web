@@ -4,27 +4,35 @@ import { useUsersApi } from './use-users-api'
 import { toast } from 'sonner'
 import { useEffect, useState } from 'react'
 import { getAvatarRandom } from '../utils/avatar-util'
+interface useUsersApiQueryProps {
+  userId?: string
+  includeReporters?: boolean
+  includeRecipients?: boolean
+  includeProcessUsers?: boolean
+  includeWorkItems?: boolean
+  enabled?: boolean
+}
 
-export const useUsersApiQuery = (
-  userId?: string,
-  includeReporters: boolean = false,
+export const useUsersApiQuery = ({
+  userId,
+  includeReporters = false,
   includeRecipients = false,
   includeProcessUsers = false,
   includeWorkItems = false,
-  enabled: boolean = true
-) => {
+  enabled = true,
+}: useUsersApiQueryProps) => {
   const [users, setUsers] = useState<User[]>([])
   const { getUsers, createUser, updateUser, deleteUser } = useUsersApi()
   const { data, isLoading, error } = useQuery({
     queryKey: ['users', userId],
     queryFn: () =>
-      getUsers(
+      getUsers({
         userId,
         includeReporters,
         includeRecipients,
         includeProcessUsers,
-        includeWorkItems
-      ),
+        includeWorkItems,
+      }),
     staleTime: 300000,
     cacheTime: 600000,
     enabled: enabled,
