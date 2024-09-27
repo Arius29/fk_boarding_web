@@ -2,8 +2,7 @@ import { IconUsersPlus } from '@tabler/icons-react'
 import { useState, useMemo, useCallback } from 'react'
 import { Avatar } from '../layout/avatar'
 import { useDebounce } from 'use-debounce'
-import { Control, Controller } from 'react-hook-form'
-import { ProcessUser } from '../../../pages/sherpas-process/interfaces/process-user'
+import { Control, Controller, FieldPath, FieldValues } from 'react-hook-form'
 import { useUsersApiQuery } from '../../../hooks/use-users-api-query'
 import { User } from '../../../pages/sherpas/interfaces/user'
 
@@ -27,10 +26,11 @@ const validations = {
   },
 }
 
-interface UserDropdownProps {
+interface UserDropdownProps<T extends FieldValues> {
+  name: FieldPath<T>
   value?: string
   containerStyles?: React.CSSProperties
-  control: Control<ProcessUser>
+  control: Control<T>
   error?: string
   disabled?: boolean
 }
@@ -41,13 +41,14 @@ const CLASS_NAMES = {
     'ring-0 outline-none border-b border-gray-300 p-2 inline-block w-full text-gray-300',
 }
 
-export const UserDropdownInput = ({
+export const UserDropdownInput = <T extends FieldValues>({
+  name,
   value = '',
   containerStyles,
   control,
   error,
   disabled = false,
-}: UserDropdownProps) => {
+}: UserDropdownProps<T>) => {
   const [searchValue, setSearchValue] = useState(value)
   const [showModal, setShowModal] = useState(false)
 
@@ -79,7 +80,7 @@ export const UserDropdownInput = ({
 
   return (
     <Controller
-      name="user"
+      name={name}
       rules={validations.userId}
       control={control}
       render={({ field }) => (

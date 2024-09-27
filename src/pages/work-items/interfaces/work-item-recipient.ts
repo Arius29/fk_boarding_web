@@ -1,16 +1,8 @@
 import { User } from '../../sherpas/interfaces/user'
-import { WorkItemStatus } from './work-item-status'
+import { WorkItemRecipientBase } from './work-item-recipient-base'
 
-export interface WorkItemRecipient {
-  workItemId: number
-  userId: string
-  status?: WorkItemStatus
-  startedOn?: Date
-  finishedOn?: Date
-  startedBy?: string
-  finishedBy?: string
-  notes?: string
-  user?: User
-  starter?: User
-  finisher?: User
+export interface WorkItemRecipient extends WorkItemRecipientBase {
+  user?: User | null
+  starter?: User | null
+  finisher?: User | null
 }

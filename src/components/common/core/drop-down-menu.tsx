@@ -7,6 +7,7 @@ interface DropDownProps {
   label?: string
   description?: string
   error?: string
+  includeIcon?: boolean
   disabled?: boolean
   children: ({
     showModal,
@@ -30,6 +31,7 @@ export const DropDownMenu = ({
   value,
   description,
   error,
+  includeIcon = true,
   disabled = false,
   children,
 }: DropDownProps) => {
@@ -59,7 +61,7 @@ export const DropDownMenu = ({
         }}
         className={disabled ? CLASS_NAMES.disable : CLASS_NAMES.base}
       >
-        <IconCircleFilled className="w-4 h-4" />
+        {includeIcon && <IconCircleFilled className="w-4 h-4" />}
         <span>{selectedValue}</span>
         <IconChevronDown
           stroke={2}

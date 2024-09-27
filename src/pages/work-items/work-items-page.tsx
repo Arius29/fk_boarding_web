@@ -5,7 +5,6 @@ import { WorkItemRecipient } from './interfaces/work-item-recipient'
 import { WorkItemReporter } from './interfaces/work-item-reporter'
 import { WorkItemListItem } from './components/work-item-list-item'
 import { IconChevronsRight, IconPlus } from '@tabler/icons-react'
-import { useWorkItemApiQuery } from '../../hooks/use-work-item-api-query'
 import { WorkItemNav } from './components/work-item-nav'
 import { Toaster } from 'sonner'
 import { SearchBar } from '../../components/common/search/search-bar'
@@ -32,12 +31,9 @@ const groupByCategory = (workItems: WorkItem[]) => {
 
 export const WorkItemsPage = () => {
   const [searchValue, setSearchValue] = useState<string>('')
-  const [selectedProcessId, setSelectedProcessId] = useState<
-    number | undefined
-  >(undefined)
+  const [selectedProcessId, setSelectedProcessId] = useState<number>(0)
   const searchBarRef = useRef<HTMLInputElement>(null)
   const { processes } = useProcessApiQuery({
-    processId: selectedProcessId,
     includeCategories: true,
     includeWorkItems: true,
     includeUsers: true,
@@ -46,13 +42,13 @@ export const WorkItemsPage = () => {
     omitWorkItemsAbandoned: true,
   })
 
-  const { workItems } = useWorkItemApiQuery({ enabled: false })
-  console.log(workItems)
   const handleSearch = (query: string) => {
     setSearchValue(query)
   }
 
-  const process = processes[0]
+  const process = selectedProcessId
+    ? processes.find((p) => p.id === selectedProcessId)
+    : processes[0]
   const workItemsMap = groupByCategory(
     filterWorkItems(process?.workItems || [], searchValue)
   )
@@ -76,19 +72,38 @@ export const WorkItemsPage = () => {
         <div>Filters</div>
       </header>
       <section className="h-[calc(100vh-11rem)] flex flex-col overflow-y-auto mt-4">
-        <h2 className="text-2xl mb-4">
-          {process?.name}{' '}
-          <IconChevronsRight
-            stroke={2}
-            className="w-6 h-6 transition-transform ease-linear duration-150 hover:scale-110 active:scale-110 focus:scale-110"
-          />
-        </h2>
+        <div className="relative group">
+          <h2 className="text-2xl mb-4 flex flex-row items-center gap-4">
+            {process?.name}{' '}
+            <IconChevronsRight
+              stroke={2}
+              className="w-6 h-6 transition-transform ease-linear duration-150 hover:scale-110 active:scale-110 focus:scale-110"
+            />
+          </h2>
+          <ul className="group-hover:h-20 transition-h delay-0 duration-200 ease-in-out h-0 overflow-hidden absolute z-40 bg-white w-60 top-full rounded">
+            {processes.map((p) => (
+              <li key={p.id}>
+                <a
+                  className="text-xl mb-4 flex flex-row items-center gap-4 hover:text-blue-550 active:text-blue-550 focus:text-blue-550"
+                  href="#"
+                  onClick={() => setSelectedProcessId(p.id)}
+                >
+                  {p?.name}
+                  <IconChevronsRight
+                    stroke={2}
+                    className="w-6 h-6 transition-transform ease-linear duration-150 hover:scale-110 active:scale-110 focus:scale-110"
+                  />
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
         <div className="flex flex-1 flex-row flex-nowrap gap-4">
           {Array.from(workItemsMap.entries()).map(([key, workItems]) => (
             <div key={key} className="bg-gray-50 rounded-md">
               <div className="sticky top-0 z-20 p-4 bg-gray-50 rounded-md">
                 <h3 className="text-lg font-medium text-gray-700 mb-2">
-                  {process.categories?.find((c) => c.id === key)?.name}
+                  {process?.categories?.find((c) => c.id === key)?.name}
                 </h3>
                 <button className="flex flex-row items-center gap-2 text-lg rounded-md border border-gray-200 bg-white text-blue-550 py-2 px-4 w-full transition-transform ease-linear duration-150 delay-0 hover:scale-105 active:scale-105 focus:scale-105">
                   <IconPlus stroke={2} />

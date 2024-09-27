@@ -47,6 +47,7 @@ export const EditProcessSherpaModal = ({
           className="flex flex-col gap-3"
         >
           <UserDropdownInput
+            name="user"
             control={control}
             error={errors.userId?.message}
             value={processUser.user?.name}

@@ -10,6 +10,7 @@ import {
   SHERPAS_PROCESS_PAGE_URL,
   TAGS_PAGE_URL,
   TASK_CALENDAR_PAGE_URL,
+  TASK_HISTORY_PAGE_URL,
   TASKS_PAGE_URL,
 } from './routes-config'
 import { PrivateRouteAsideMenu } from '../components/common/private-route-aside-menu'
@@ -22,6 +23,7 @@ import { NotificationsPage } from '../pages/notifications/notifications-page'
 import { WorkItemCategoryPage } from '../pages/categories/work-item-category-page'
 import { WorkItemsPage } from '../pages/work-items/work-items-page'
 import { WorkItemsCalendarPage } from '../pages/work-items/work-items-calendar-page'
+import { WorkItemsHistoryPage } from '../pages/work-items/work-items-history-page'
 
 export const privateRoutes: RouteObject[] = [
   PrivateRouteAsideMenu({
@@ -39,6 +41,10 @@ export const privateRoutes: RouteObject[] = [
   PrivateRouteAsideMenu({
     path: TASK_CALENDAR_PAGE_URL,
     element: <WorkItemsCalendarPage />,
+  }),
+  PrivateRouteAsideMenu({
+    path: TASK_HISTORY_PAGE_URL,
+    element: <WorkItemsHistoryPage />,
   }),
   PrivateRouteAsideMenu({
     path: PROCESS_PAGE_URL,
