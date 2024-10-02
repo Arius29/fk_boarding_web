@@ -9,6 +9,7 @@ interface DropDownProps {
   error?: string
   includeIcon?: boolean
   disabled?: boolean
+  className?: string
   children: ({
     showModal,
     handleToggleModal,
@@ -33,6 +34,7 @@ export const DropDownMenu = ({
   error,
   includeIcon = true,
   disabled = false,
+  className,
   children,
 }: DropDownProps) => {
   const [showModal, setShowModal] = useState(false)
@@ -59,7 +61,9 @@ export const DropDownMenu = ({
         onClick={() => {
           if (!disabled) handleToggleModal()
         }}
-        className={disabled ? CLASS_NAMES.disable : CLASS_NAMES.base}
+        className={
+          className || disabled ? CLASS_NAMES.disable : CLASS_NAMES.base
+        }
       >
         {includeIcon && <IconCircleFilled className="w-4 h-4" />}
         <span>{selectedValue}</span>

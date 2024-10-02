@@ -2,7 +2,6 @@ import { forwardRef } from 'react'
 
 interface InputFormLabelProps extends React.HTMLProps<HTMLInputElement> {
   id: string
-  type?: string
   label?: string
   description?: string
   leftIcon?: React.ReactNode

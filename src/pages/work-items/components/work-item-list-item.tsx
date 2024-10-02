@@ -6,13 +6,17 @@ import { WorkItemsTagsList } from './work-items-tags-list'
 import { WorkItemTaskId } from './work-item-task-id'
 import { WorkItem } from '../interfaces/work-item'
 
-interface WorkItemListItemProps {
+interface WorkItemListItemProps extends React.HTMLAttributes<HTMLLIElement> {
   workItem: WorkItem
 }
-export const WorkItemListItem = ({ workItem }: WorkItemListItemProps) => {
+export const WorkItemListItem = ({
+  workItem,
+  ...props
+}: WorkItemListItemProps) => {
   return (
     <li
       key={workItem.id}
+      {...props}
       className="relative p-4 border bg-white border-gray-200 rounded-md w-96 h-48 grid items-center gap-3 hover:bg-gray-50 active:bg-gray-50 focus:bg-gray-50"
     >
       <header className="grid grid-cols-3 items-center">
@@ -38,7 +42,6 @@ export const WorkItemListItem = ({ workItem }: WorkItemListItemProps) => {
               />
             </li>
           ))}
-          {}
           {workItem.recipients?.length && workItem.recipients?.length > 4 ? (
             <li className="last:grid last:h-7 last:w-7 last:place-items-center last:rounded-full last:border last:border-gray-300 last:bg-white last:text-sm [&:nth-child(2)]:-translate-x-3 [&:nth-child(3)]:-translate-x-7 [&:nth-child(4)]:-translate-x-10 [&:nth-child(5)]:-translate-x-10">
               {`+${workItem.recipients.length - 4}`}

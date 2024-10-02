@@ -190,6 +190,7 @@ export const useWorkItemApiQuery = ({
 
   return {
     workItems,
+    setWorkItems,
     isLoading,
     error,
     mutationAddWorkItem,

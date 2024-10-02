@@ -9,6 +9,7 @@ import { WorkItemNav } from './components/work-item-nav'
 import { Toaster } from 'sonner'
 import { SearchBar } from '../../components/common/search/search-bar'
 import { useRef, useState } from 'react'
+import { FormWorkItem } from './components/form-work-item'
 
 const filterWorkItems = (workItems: WorkItem[], searchValue: string) => {
   return workItems.filter((workItem) => {
@@ -29,8 +30,19 @@ const groupByCategory = (workItems: WorkItem[]) => {
   return groupBy(workItems, 'categoryId')
 }
 
+const initialStateWorkItem: WorkItem = {
+  id: 0,
+  name: '',
+  order: 0,
+  categoryId: 0,
+  processId: 0,
+  status: 0,
+  priority: 0,
+}
+
 export const WorkItemsPage = () => {
   const [searchValue, setSearchValue] = useState<string>('')
+  const [showModal, setShowModal] = useState(false)
   const [selectedProcessId, setSelectedProcessId] = useState<number>(0)
   const searchBarRef = useRef<HTMLInputElement>(null)
   const { processes } = useProcessApiQuery({
@@ -41,6 +53,8 @@ export const WorkItemsPage = () => {
     includeProcessUsers: true,
     omitWorkItemsAbandoned: true,
   })
+
+  const handleToggle = () => setShowModal(!showModal)
 
   const handleSearch = (query: string) => {
     setSearchValue(query)
@@ -105,11 +119,20 @@ export const WorkItemsPage = () => {
                 <h3 className="text-lg font-medium text-gray-700 mb-2">
                   {process?.categories?.find((c) => c.id === key)?.name}
                 </h3>
-                <button className="flex flex-row items-center gap-2 text-lg rounded-md border border-gray-200 bg-white text-blue-550 py-2 px-4 w-full transition-transform ease-linear duration-150 delay-0 hover:scale-105 active:scale-105 focus:scale-105">
+                <button
+                  onClick={handleToggle}
+                  className="flex flex-row items-center gap-2 text-blue-550"
+                >
                   <IconPlus stroke={2} />
                   Add task
                 </button>
               </div>
+              {showModal && (
+                <FormWorkItem
+                  workItem={initialStateWorkItem}
+                  handleToggle={handleToggle}
+                />
+              )}
               <ul key={key} className="flex flex-col gap-4 p-4">
                 {workItems.map((workItem) => (
                   <WorkItemListItem key={workItem.id} workItem={workItem} />

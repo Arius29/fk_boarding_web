@@ -1,3 +1,4 @@
+import { IconCircleFilled } from '@tabler/icons-react'
 import { TableBody } from '../../../components/common/table/table-body'
 import { TableBodyCell } from '../../../components/common/table/table-body-cell'
 import { TableHeader } from '../../../components/common/table/table-header'
@@ -5,7 +6,10 @@ import { TableHeaderSortCell } from '../../../components/common/table/table-head
 import { TableRow } from '../../../components/common/table/table-row'
 import { WorkItem } from '../interfaces/work-item'
 import { WorkItemRecipient } from '../interfaces/work-item-recipient'
-import { getWorkItemStatus } from '../interfaces/work-item-status'
+import {
+  getStatusColor,
+  getWorkItemStatus,
+} from '../interfaces/work-item-status'
 
 interface TableWorkItemRecipientsProps {
   workItems: WorkItem[]
@@ -57,7 +61,12 @@ export const TableWorkItemRecipients = ({
               <TableBodyCell>{recipient.workItemId}</TableBodyCell>
               <TableBodyCell colSpan={2}>{workItem.name}</TableBodyCell>
               <TableBodyCell>
-                {getWorkItemStatus(recipient.status ?? 0)}
+                <span
+                  className={`flex flex-row items-center gap-2 ${getStatusColor(recipient.status ?? 0)}`}
+                >
+                  <IconCircleFilled className="w-5 h-5" />
+                  {getWorkItemStatus(recipient.status ?? 0)}
+                </span>
               </TableBodyCell>
               <TableBodyCell>
                 {recipient.startedOn &&
