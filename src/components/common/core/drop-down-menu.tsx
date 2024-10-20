@@ -13,10 +13,12 @@ interface DropDownProps {
   children: ({
     showModal,
     handleToggleModal,
+    selectedValue,
   }: {
     showModal: boolean
     handleToggleModal: () => void
     handleSelectValue: (value: string) => void
+    selectedValue: string
   }) => JSX.Element
 }
 
@@ -50,19 +52,25 @@ export const DropDownMenu = ({
 
   return (
     <div className="relative space-y-2">
-      <label
-        htmlFor={id}
-        className="text-gray-950 font-bold inline-block w-full"
-      >
-        {label}
-      </label>
+      {label && (
+        <label
+          htmlFor={id}
+          className="text-gray-950 font-bold inline-block w-full"
+        >
+          {label}
+        </label>
+      )}
       <button
         type="button"
         onClick={() => {
           if (!disabled) handleToggleModal()
         }}
         className={
-          className || disabled ? CLASS_NAMES.disable : CLASS_NAMES.base
+          className
+            ? className
+            : disabled
+              ? CLASS_NAMES.disable
+              : CLASS_NAMES.base
         }
       >
         {includeIcon && <IconCircleFilled className="w-4 h-4" />}
@@ -78,7 +86,12 @@ export const DropDownMenu = ({
         <p className="text-gray-400 text-sm w-full">{description}</p>
       )}
       {error && <p className="text-red-500 text-sm w-full">{error}</p>}
-      {children({ showModal, handleToggleModal, handleSelectValue })}
+      {children({
+        showModal,
+        handleToggleModal,
+        handleSelectValue,
+        selectedValue,
+      })}
     </div>
   )
 }

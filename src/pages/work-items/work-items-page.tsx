@@ -67,6 +67,13 @@ export const WorkItemsPage = () => {
     filterWorkItems(process?.workItems || [], searchValue)
   )
 
+  const handleSelectTask = (categoryId: number, processId: number) => {
+    const category = process?.categories?.find((c) => c.id === categoryId)
+    initialStateWorkItem.processId = processId
+    initialStateWorkItem.category = category
+    handleToggle()
+  }
+
   return (
     <>
       <Toaster position="top-right" richColors />
@@ -85,33 +92,39 @@ export const WorkItemsPage = () => {
         </form>
         <div>Filters</div>
       </header>
-      <section className="h-[calc(100vh-11rem)] flex flex-col overflow-y-auto mt-4">
-        <div className="relative group">
-          <h2 className="text-2xl mb-4 flex flex-row items-center gap-4">
-            {process?.name}{' '}
-            <IconChevronsRight
-              stroke={2}
-              className="w-6 h-6 transition-transform ease-linear duration-150 hover:scale-110 active:scale-110 focus:scale-110"
-            />
-          </h2>
-          <ul className="group-hover:h-20 transition-h delay-0 duration-200 ease-in-out h-0 overflow-hidden absolute z-40 bg-white w-60 top-full rounded">
-            {processes.map((p) => (
-              <li key={p.id}>
-                <a
-                  className="text-xl mb-4 flex flex-row items-center gap-4 hover:text-blue-550 active:text-blue-550 focus:text-blue-550"
-                  href="#"
-                  onClick={() => setSelectedProcessId(p.id)}
-                >
-                  {p?.name}
-                  <IconChevronsRight
-                    stroke={2}
-                    className="w-6 h-6 transition-transform ease-linear duration-150 hover:scale-110 active:scale-110 focus:scale-110"
-                  />
-                </a>
-              </li>
-            ))}
-          </ul>
-        </div>
+      <div className="relative group">
+        <h2 className="text-2xl mb-4 flex flex-row items-center gap-4">
+          {process?.name}{' '}
+          <IconChevronsRight
+            stroke={2}
+            className="w-6 h-6 transition-transform ease-linear duration-150 hover:scale-110 active:scale-110 focus:scale-110"
+          />
+        </h2>
+        <ul className="group-hover:h-20 transition-h delay-0 duration-200 ease-in-out h-0 overflow-hidden absolute z-40 bg-white w-60 top-full rounded">
+          {processes.map((p) => (
+            <li key={p.id}>
+              <a
+                className="text-xl mb-4 flex flex-row items-center gap-4 hover:text-blue-550 active:text-blue-550 focus:text-blue-550"
+                href="#"
+                onClick={() => setSelectedProcessId(p.id)}
+              >
+                {p?.name}
+                <IconChevronsRight
+                  stroke={2}
+                  className="w-6 h-6 transition-transform ease-linear duration-150 hover:scale-110 active:scale-110 focus:scale-110"
+                />
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+      <section className="h-[calc(100vh-20rem)] flex flex-col overflow-y-auto mt-4 relative">
+        {showModal && (
+          <FormWorkItem
+            workItem={initialStateWorkItem}
+            handleToggle={handleToggle}
+          />
+        )}
         <div className="flex flex-1 flex-row flex-nowrap gap-4">
           {Array.from(workItemsMap.entries()).map(([key, workItems]) => (
             <div key={key} className="bg-gray-50 rounded-md">
@@ -120,19 +133,14 @@ export const WorkItemsPage = () => {
                   {process?.categories?.find((c) => c.id === key)?.name}
                 </h3>
                 <button
-                  onClick={handleToggle}
-                  className="flex flex-row items-center gap-2 text-blue-550"
+                  onClick={() => handleSelectTask(key, process?.id || 0)}
+                  className="flex flex-row items-center gap-2 text-blue-550 bg-white w-full rounded-md py-3 px-2 border hover:bg-gray-200 active:bg-gray-200 focus:bg-gray-200"
                 >
                   <IconPlus stroke={2} />
                   Add task
                 </button>
               </div>
-              {showModal && (
-                <FormWorkItem
-                  workItem={initialStateWorkItem}
-                  handleToggle={handleToggle}
-                />
-              )}
+
               <ul key={key} className="flex flex-col gap-4 p-4">
                 {workItems.map((workItem) => (
                   <WorkItemListItem key={workItem.id} workItem={workItem} />

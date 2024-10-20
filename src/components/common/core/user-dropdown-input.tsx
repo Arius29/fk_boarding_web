@@ -70,6 +70,10 @@ export const UserDropdownInput = <T extends FieldValues>({
     [filteredUsers]
   )
 
+  const toggleModal = () => {
+    setShowModal((prev) => !prev)
+  }
+
   const onChangeSearchValue = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       if (!showModal) setShowModal(true)
@@ -102,7 +106,7 @@ export const UserDropdownInput = <T extends FieldValues>({
                 if (!disabled) onChangeSearchValue(e)
               }}
               onClick={() => {
-                if (!disabled) setShowModal(true)
+                if (!disabled) toggleModal()
               }}
               value={searchValue}
             />

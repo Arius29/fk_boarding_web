@@ -37,6 +37,10 @@ export const UserListDropdownInput = ({
   const [searchValue, setSearchValue] = useState('')
   const [showModal, setShowModal] = useState(false)
 
+  const toggleModal = () => {
+    setShowModal((prev) => !prev)
+  }
+
   const { users } = useUsersApiQuery({})
 
   const [debouncedSearchValue] = useDebounce(searchValue, 300)
@@ -83,7 +87,7 @@ export const UserListDropdownInput = ({
               if (!disabled) onChangeSearchValue(e)
             }}
             onClick={() => {
-              if (!disabled) setShowModal(true)
+              if (!disabled) toggleModal()
             }}
             value={searchValue}
           />

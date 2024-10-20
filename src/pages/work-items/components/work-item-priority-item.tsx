@@ -33,10 +33,12 @@ const getClassName = (
 }
 
 export const WorkItemPriorityItem = ({
+  status = 'Low',
+  type = 'not-filled',
   children,
   ...props
 }: WorkItemPriorityItemProps) => {
-  const className = getClassName('Low', 'not-filled')
+  const className = getClassName(status, type)
 
   return (
     <li {...props} className={className}>
