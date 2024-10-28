@@ -12,7 +12,7 @@ const validations = {
   status: {
     required: { value: true, message: 'The status is required.' },
     min: {
-      value: 1,
+      value: 0,
       message: 'The status is required.',
     },
   },

@@ -48,17 +48,17 @@ export const FormWorkItem = ({
   const recipients = useWatch({
     control,
     name: 'recipients',
-    defaultValue: [],
+    defaultValue: workItem.recipients ?? [],
   })
   const tags = useWatch({
     control,
     name: 'tags',
-    defaultValue: [],
+    defaultValue: workItem.tags ?? [],
   })
   const reporters = useWatch({
     control,
     name: 'reporters',
-    defaultValue: [],
+    defaultValue: workItem.reporters ?? [],
   })
   const handleAddRecipient = (user: User) => {
     const currentRecipients = getValues('recipients') ?? []
@@ -104,19 +104,22 @@ export const FormWorkItem = ({
     ])
   }
 
-  const handleDeleteReporter = (userId: string) => {
-    const currentReporters = getValues('reporters') ?? []
-    setValue(
-      'reporters',
-      currentReporters.filter((r) => r.userId !== userId)
-    )
-  }
+  // const handleDeleteReporter = (userId: string) => {
+  //   const currentReporters = getValues('reporters') ?? []
+  //   setValue(
+  //     'reporters',
+  //     currentReporters.filter((r) => r.userId !== userId)
+  //   )
+  // }
 
   const handleFormSubmit = (data: WorkItem) => {
-    if (isEditing) mutationEditWorkItem.mutate(data)
-    else mutationAddWorkItem.mutate(data)
-
-    handleToggle()
+    if (isEditing) {
+      mutationEditWorkItem.mutate(data)
+      mutationEditWorkItem.isSuccess && handleToggle()
+    } else {
+      mutationAddWorkItem.mutate(data)
+      mutationAddWorkItem.isSuccess && handleToggle()
+    }
   }
 
   return (
@@ -183,6 +186,7 @@ export const FormWorkItem = ({
                 name="assigner"
                 control={control}
                 error={errors.assigner?.message}
+                value={workItem?.assigner?.name}
               />
             </div>
             <div className="grid grid-cols-8">
@@ -209,7 +213,7 @@ export const FormWorkItem = ({
             <InputFormLabel
               id="dueDate"
               label="Due Date"
-              type="date"
+              type="datetime-local"
               InputContainerClassType={errors.dueDate ? 'error' : 'success'}
               error={errors.dueDate?.message}
               {...register('dueDate')}

@@ -8,16 +8,19 @@ import { WorkItem } from '../interfaces/work-item'
 
 interface WorkItemListItemProps extends React.HTMLAttributes<HTMLLIElement> {
   workItem: WorkItem
+  handleEditTask: (workItem: WorkItem) => void
 }
 export const WorkItemListItem = ({
   workItem,
+  handleEditTask,
   ...props
 }: WorkItemListItemProps) => {
   return (
     <li
       key={workItem.id}
-      {...props}
+      onClick={() => handleEditTask(workItem)}
       className="relative p-4 border bg-white border-gray-200 rounded-md w-96 h-48 grid items-center gap-3 hover:bg-gray-50 active:bg-gray-50 focus:bg-gray-50"
+      {...props}
     >
       <header className="grid grid-cols-3 items-center">
         <WorkItemPriorityBadge priority={workItem.priority || 0} />

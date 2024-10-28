@@ -44,6 +44,7 @@ export const WorkItemsPage = () => {
   const [searchValue, setSearchValue] = useState<string>('')
   const [showModal, setShowModal] = useState(false)
   const [selectedProcessId, setSelectedProcessId] = useState<number>(0)
+  const selectedWorkItem = useRef<WorkItem | null>()
   const searchBarRef = useRef<HTMLInputElement>(null)
   const { processes } = useProcessApiQuery({
     includeCategories: true,
@@ -67,10 +68,16 @@ export const WorkItemsPage = () => {
     filterWorkItems(process?.workItems || [], searchValue)
   )
 
-  const handleSelectTask = (categoryId: number, processId: number) => {
+  const handleAddTask = (categoryId: number, processId: number) => {
     const category = process?.categories?.find((c) => c.id === categoryId)
     initialStateWorkItem.processId = processId
     initialStateWorkItem.category = category
+    selectedWorkItem.current = null
+    handleToggle()
+  }
+
+  const handleEditTask = (workItem: WorkItem) => {
+    selectedWorkItem.current = workItem
     handleToggle()
   }
 
@@ -121,8 +128,9 @@ export const WorkItemsPage = () => {
       <section className="h-[calc(100vh-20rem)] flex flex-col overflow-y-auto mt-4 relative">
         {showModal && (
           <FormWorkItem
-            workItem={initialStateWorkItem}
+            workItem={selectedWorkItem.current || initialStateWorkItem}
             handleToggle={handleToggle}
+            isEditing={selectedWorkItem.current ? true : false}
           />
         )}
         <div className="flex flex-1 flex-row flex-nowrap gap-4">
@@ -133,7 +141,7 @@ export const WorkItemsPage = () => {
                   {process?.categories?.find((c) => c.id === key)?.name}
                 </h3>
                 <button
-                  onClick={() => handleSelectTask(key, process?.id || 0)}
+                  onClick={() => handleAddTask(key, process?.id || 0)}
                   className="flex flex-row items-center gap-2 text-blue-550 bg-white w-full rounded-md py-3 px-2 border hover:bg-gray-200 active:bg-gray-200 focus:bg-gray-200"
                 >
                   <IconPlus stroke={2} />
@@ -143,7 +151,11 @@ export const WorkItemsPage = () => {
 
               <ul key={key} className="flex flex-col gap-4 p-4">
                 {workItems.map((workItem) => (
-                  <WorkItemListItem key={workItem.id} workItem={workItem} />
+                  <WorkItemListItem
+                    key={workItem.id}
+                    workItem={workItem}
+                    handleEditTask={handleEditTask}
+                  />
                 ))}
               </ul>
             </div>
