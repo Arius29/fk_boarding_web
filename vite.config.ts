@@ -13,6 +13,9 @@ for (const key in process.env) {
 
 export default defineConfig({
   plugins: [react()],
+  esbuild: {
+    logLevel: 'silent',
+  },
   define: envVariables,
   server: {
     strictPort: true,

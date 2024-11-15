@@ -5,6 +5,7 @@ import { WorkItemCategory } from '../pages/categories/interfaces/work-item-categ
 import { useWorkItemCategoriesApi } from './use-work-item-categories-api'
 import { WorkItemCategoryBase } from '../pages/categories/interfaces/work-item-category-base'
 import { Process } from '../pages/process/interfaces/process'
+import { useUserRole } from './use-user-role'
 
 interface useWorkItemCategoriesApiQueryProps {
   processes: Process[]
@@ -24,27 +25,36 @@ export const useWorkItemCategoriesApiQuery = ({
   enabled = true,
 }: useWorkItemCategoriesApiQueryProps) => {
   const [categories, setCategories] = useState<WorkItemCategory[]>([])
+  const { isAdmin, isUser, isObserver } = useUserRole()
   const { getCategories, createCategory, updateCategory, deleteCategory } =
     useWorkItemCategoriesApi()
   const { data, isLoading, error } = useQuery({
     queryKey: ['categories', categoryId, processId],
-    queryFn: () =>
-      getCategories({
+    queryFn: () => {
+      if (!isAdmin() && !isUser() && !isObserver())
+        throw new Error('You are not authorized to get categories')
+
+      return getCategories({
         categoryId,
         processId,
         includeProcesses,
         includeWorkItems,
-      }),
+      })
+    },
     staleTime: 300000,
     cacheTime: 600000,
     enabled: enabled,
-    onError: () => {
-      toast.error('An error occurred while trying to get categories')
+    onError: (error: Error) => {
+      toast.error(
+        error?.message || 'An error occurred while trying to get categories'
+      )
     },
   })
 
   const mutationAddCategory = useMutation({
     mutationFn: (category: WorkItemCategory) => {
+      if (!isAdmin())
+        throw new Error('You are not authorized to create a category')
       return createCategory([
         {
           name: category.name,
@@ -65,15 +75,18 @@ export const useWorkItemCategoriesApiQuery = ({
       setCategories([...categories, ...newCategories])
       toast.success('Category created successfully')
     },
-    onError: () => {
+    onError: (error: Error) => {
       toast.error(
-        'An error occurred while trying to create a category, please try again'
+        error?.message ||
+          'An error occurred while trying to create a category, please try again'
       )
     },
   })
 
   const mutationEditCategory = useMutation({
     mutationFn: (category: WorkItemCategory) => {
+      if (!isAdmin())
+        throw new Error('You are not authorized to update a category')
       return updateCategory([
         {
           id: category.id,
@@ -98,15 +111,18 @@ export const useWorkItemCategoriesApiQuery = ({
       )
       toast.success('Category updated successfully')
     },
-    onError: () => {
+    onError: (error: Error) => {
       toast.error(
-        'An error occurred while trying to update a category, please try again'
+        error?.message ||
+          'An error occurred while trying to update a category, please try again'
       )
     },
   })
 
   const mutationDeleteCategory = useMutation({
     mutationFn: (category: WorkItemCategory) => {
+      if (!isAdmin())
+        throw new Error('You are not authorized to delete a category')
       return deleteCategory([category])
     },
     onSuccess: (data: WorkItemCategoryBase[]) => {
@@ -117,9 +133,10 @@ export const useWorkItemCategoriesApiQuery = ({
       )
       toast.success('Category deleted successfully')
     },
-    onError: () => {
+    onError: (error: Error) => {
       toast.error(
-        'An error occurred while trying to delete a category, please try again'
+        error?.message ||
+          'An error occurred while trying to delete a category, please try again'
       )
     },
   })

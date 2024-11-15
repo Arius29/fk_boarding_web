@@ -4,6 +4,7 @@ import { useUsersApi } from './use-users-api'
 import { toast } from 'sonner'
 import { useEffect, useState } from 'react'
 import { getAvatarRandom } from '../utils/avatar-util'
+import { useUserRole } from './use-user-role'
 interface useUsersApiQueryProps {
   userId?: string
   includeReporters?: boolean
@@ -23,26 +24,35 @@ export const useUsersApiQuery = ({
 }: useUsersApiQueryProps) => {
   const [users, setUsers] = useState<User[]>([])
   const { getUsers, createUser, updateUser, deleteUser } = useUsersApi()
+  const { isAdmin, isUser, isObserver } = useUserRole()
   const { data, isLoading, error } = useQuery({
     queryKey: ['users', userId],
-    queryFn: () =>
-      getUsers({
+    queryFn: () => {
+      if (!isAdmin() && !isUser() && !isObserver())
+        throw new Error('You are not authorized to get users')
+
+      return getUsers({
         userId,
         includeReporters,
         includeRecipients,
         includeProcessUsers,
         includeWorkItems,
-      }),
+      })
+    },
     staleTime: 300000,
     cacheTime: 600000,
     enabled: enabled,
-    onError: () => {
-      toast.error('An error occurred while trying to get users')
+    onError: (error: Error) => {
+      toast.error(
+        error?.message || 'An error occurred while trying to get users'
+      )
     },
   })
 
   const mutationAddUser = useMutation({
     mutationFn: (user: User) => {
+      if (!isAdmin() && !isUser())
+        throw new Error('You are not authorized to create users')
       return createUser({
         email: user.email,
         name: user.name,
@@ -65,15 +75,18 @@ export const useUsersApiQuery = ({
       setUsers([...users, data])
       toast.success('User created successfully')
     },
-    onError: () => {
+    onError: (error: Error) => {
       toast.error(
-        'An error occurred while trying to create a user, please try again'
+        error?.message ||
+          'An error occurred while trying to create a user, please try again'
       )
     },
   })
 
   const mutationEditUser = useMutation({
     mutationFn: (user: User) => {
+      if (!isAdmin() && !isUser())
+        throw new Error('You are not authorized to update users')
       return updateUser({
         id: user.id,
         email: user.email,
@@ -104,24 +117,27 @@ export const useUsersApiQuery = ({
 
       toast.success('User updated successfully')
     },
-    onError: () => {
+    onError: (error: Error) => {
       toast.error(
-        'An error occurred while trying to update a user, please try again'
+        error?.message ||
+          'An error occurred while trying to update a user, please try again'
       )
     },
   })
 
   const mutationDeleteUser = useMutation({
     mutationFn: (userId: string) => {
+      if (!isAdmin()) throw new Error('You are not authorized to delete users')
       return deleteUser(userId)
     },
     onSuccess: (data) => {
       setUsers(users.filter((user) => user.id !== data.id))
       toast.success('User deleted successfully')
     },
-    onError: () => {
+    onError: (error: Error) => {
       toast.error(
-        'An error occurred while trying to delete a user, please try again'
+        error?.message ||
+          'An error occurred while trying to delete a user, please try again'
       )
     },
   })

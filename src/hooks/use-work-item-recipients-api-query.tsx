@@ -8,6 +8,7 @@ import { useMsal } from '@azure/msal-react'
 import { useWorkItemRecipientsApi } from './use-work-item-recipients-api'
 import { useMutation, useQuery } from 'react-query'
 import { WorkItemRecipientBase } from '../pages/work-items/interfaces/work-item-recipient-base'
+import { useUserRole } from './use-user-role'
 
 const createBaseUser = (account: AccountInfo): User => {
   return {
@@ -69,6 +70,7 @@ export const useWorkItemRecipientsApiQuery = ({
   enabled = true,
 }: useWorkItemRecipientsApiQueryProps) => {
   const [recipients, setRecipients] = useState<WorkItemRecipient[]>([])
+  const { isAdmin, isUser, isObserver } = useUserRole()
   const { accounts } = useMsal()
   const account = accounts[0]
   const { getRecipients, createRecipient, updateRecipient, deleteRecipient } =
@@ -76,18 +78,25 @@ export const useWorkItemRecipientsApiQuery = ({
 
   const { data, isLoading, error } = useQuery({
     queryKey: ['recipients'],
-    queryFn: () =>
-      getRecipients({ includeUsers, omitAbandoned, workItemId, userId }),
+    queryFn: () => {
+      if (!isAdmin() && !isUser() && !isObserver())
+        throw new Error('You are not authorized to get recipients')
+      return getRecipients({ includeUsers, omitAbandoned, workItemId, userId })
+    },
     staleTime: 300000,
     cacheTime: 600000,
     enabled: enabled,
-    onError: () => {
-      toast.error('An error occurred while trying to get recipients')
+    onError: (error: Error) => {
+      toast.error(
+        error?.message || 'An error occurred while trying to get recipients'
+      )
     },
   })
 
   const mutationAddRecipient = useMutation({
     mutationFn: (workItemRecipient: WorkItemRecipient) => {
+      if (!isAdmin() && !isUser())
+        throw new Error('You are not authorized to create recipients')
       return createRecipient({
         ...workItemRecipient,
         user: workItemRecipient.user ?? createBaseUser(account),
@@ -106,15 +115,18 @@ export const useWorkItemRecipientsApiQuery = ({
       ])
       toast.success('Recipient created successfully')
     },
-    onError: () => {
+    onError: (error: Error) => {
       toast.error(
-        'An error occurred while trying to create a recipient, please try again'
+        error?.message ||
+          'An error occurred while trying to create a recipient, please try again'
       )
     },
   })
 
   const mutationEditRecipient = useMutation({
     mutationFn: (workItemRecipient: WorkItemRecipient) => {
+      if (!isAdmin() && !isUser())
+        throw new Error('You are not authorized to update recipients')
       return updateRecipient({
         ...workItemRecipient,
         user: workItemRecipient.user ?? createBaseUser(account),
@@ -139,15 +151,18 @@ export const useWorkItemRecipientsApiQuery = ({
       )
       toast.success('Recipient updated successfully')
     },
-    onError: () => {
+    onError: (error: Error) => {
       toast.error(
-        'An error occurred while trying to update a recipient, please try again'
+        error?.message ||
+          'An error occurred while trying to update a recipient, please try again'
       )
     },
   })
 
   const mutationDeleteRecipient = useMutation({
     mutationFn: (workItemRecipient: WorkItemRecipient) => {
+      if (!isAdmin() && !isUser())
+        throw new Error('You are not authorized to delete recipients')
       return deleteRecipient(
         workItemRecipient.workItemId,
         workItemRecipient.userId
@@ -163,7 +178,8 @@ export const useWorkItemRecipientsApiQuery = ({
       )
       toast.success('Recipient deleted successfully')
     },
-    onError: () => {
+    onError: (error: Error) => {
+      console.error(error)
       toast.error(
         'An error occurred while trying to delete a recipient, please try again'
       )

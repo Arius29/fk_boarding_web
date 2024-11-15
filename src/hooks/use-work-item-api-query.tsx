@@ -9,6 +9,7 @@ import { AccountInfo } from '@azure/msal-browser'
 import { getAvatarRandom } from '../utils/avatar-util'
 import { Type, User } from '../pages/sherpas/interfaces/user'
 import { WorkItemForm } from '../pages/work-items/interfaces/work-item-form'
+import { useUserRole } from './use-user-role'
 
 const createBaseUser = (account: AccountInfo): User => {
   return {
@@ -84,14 +85,17 @@ export const useWorkItemApiQuery = ({
 }: useWorkItemApiQuery) => {
   const [workItems, setWorkItems] = useState<WorkItem[]>([])
   const { accounts } = useMsal()
+  const { isAdmin, isUser, isObserver } = useUserRole()
   const account = accounts[0]
   const { getWorkItems, createWorkItem, updateWorkItem, deleteWorkItem } =
     useWorkItemApi()
 
   const { data, isLoading, error } = useQuery({
     queryKey: ['workItems', workItemId, userId, processId, categoryId],
-    queryFn: () =>
-      getWorkItems(
+    queryFn: () => {
+      if (!isAdmin() && !isUser() && !isObserver())
+        throw new Error('You are not authorized to get work items')
+      return getWorkItems(
         omitAbandoned,
         includeProcess,
         includeCategory,
@@ -103,17 +107,22 @@ export const useWorkItemApiQuery = ({
         workItemId,
         categoryId,
         processId
-      ),
+      )
+    },
     staleTime: 300000,
     cacheTime: 600000,
     enabled: enabled,
-    onError: () => {
-      toast.error('An error occurred while trying to get work items')
+    onError: (error: Error) => {
+      toast.error(
+        error?.message || 'An error occurred while trying to get work items'
+      )
     },
   })
 
   const mutationAddWorkItem = useMutation({
     mutationFn: (workItem: WorkItemForm) => {
+      if (!isAdmin() && !isUser())
+        throw new Error('You are not authorized to create work items')
       return createWorkItem({
         ...workItem,
         autoAddRecipients: workItem.autoAddRecipients || false,
@@ -131,15 +140,18 @@ export const useWorkItemApiQuery = ({
       ])
       toast.success('Work item created successfully')
     },
-    onError: () => {
+    onError: (error: Error) => {
       toast.error(
-        'An error occurred while trying to create a work item, please try again'
+        error?.message ||
+          'An error occurred while trying to create a work item, please try again'
       )
     },
   })
 
   const mutationEditWorkItem = useMutation({
     mutationFn: (workItem: WorkItem) => {
+      if (!isAdmin() && !isUser())
+        throw new Error('You are not authorized to update work items')
       return updateWorkItem({
         ...workItem,
         ...createStarterFinisherByUser(account, workItem),
@@ -160,24 +172,28 @@ export const useWorkItemApiQuery = ({
       )
       toast.success('Work item updated successfully')
     },
-    onError: () => {
+    onError: (error: Error) => {
       toast.error(
-        'An error occurred while trying to update a work item, please try again'
+        error?.message ||
+          'An error occurred while trying to update a work item, please try again'
       )
     },
   })
 
   const mutationDeleteWorkItem = useMutation({
     mutationFn: (workItemId: number) => {
+      if (!isAdmin() && !isUser())
+        throw new Error('You are not authorized to delete work items')
       return deleteWorkItem(workItemId)
     },
     onSuccess: (data: WorkItemBase) => {
       setWorkItems(workItems.filter((workItem) => workItem.id !== data.id))
       toast.success('Work item deleted successfully')
     },
-    onError: () => {
+    onError: (error: Error) => {
       toast.error(
-        'An error occurred while trying to delete a work item, please try again'
+        error?.message ||
+          'An error occurred while trying to delete a work item, please try again'
       )
     },
   })

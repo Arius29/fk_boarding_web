@@ -5,6 +5,7 @@ import { useNotificationsApi } from './use-notifications-api'
 import { useMutation, useQuery } from 'react-query'
 import { toast } from 'sonner'
 import { PagedResultNotification } from '../pages/notifications/interfaces/paged-result-notification'
+import { useUserRole } from './use-user-role'
 
 const initialState: PagedResultNotification = {
   pageNumber: 1,
@@ -42,19 +43,24 @@ export const useNotificationsApiQuery = ({
       pageSize: pageSize,
     })
   const { accounts } = useMsal()
+  const { isAdmin, isUser, isObserver } = useUserRole()
   const account = accounts[0]
 
   const { getNotifications, markAsRead } = useNotificationsApi()
 
   const { isLoading, error } = useQuery({
     queryKey: ['notifications', pageNumber],
-    queryFn: () =>
-      getNotifications({
+    queryFn: () => {
+      if (!isAdmin() && !isUser() && !isObserver())
+        throw new Error('You are not authorized to get notifications')
+
+      return getNotifications({
         userId: userId ?? account?.homeAccountId,
         pageNumber,
         pageSize,
         omitSend,
-      }),
+      })
+    },
     staleTime: 300000,
     cacheTime: 600000,
     enabled: enabled,
@@ -67,13 +73,19 @@ export const useNotificationsApiQuery = ({
         ]),
       })
     },
-    onError: () => {
-      toast.error('An error occurred while trying to get notifications')
+    onError: (error: Error) => {
+      toast.error(
+        error?.message.includes('authorized')
+          ? error?.message
+          : 'An error occurred while trying to get notifications'
+      )
     },
   })
 
   const mutationMrkAsRead = useMutation({
     mutationFn: (notificationId: number) => {
+      if (!isAdmin() && !isUser() && !isObserver())
+        throw new Error('You are not authorized to mark as read notifications')
       return markAsRead({
         notificationId,
         userId: userId ?? account?.homeAccountId,
@@ -87,9 +99,11 @@ export const useNotificationsApiQuery = ({
         ),
       })
     },
-    onError: () => {
+    onError: (error: Error) => {
       toast.error(
-        'An error occurred while trying to mark as read, please try again'
+        error?.message.includes('authorized')
+          ? error?.message
+          : 'An error occurred while trying to mark as read, please try again'
       )
     },
   })
